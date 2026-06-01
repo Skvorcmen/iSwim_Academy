@@ -10,7 +10,7 @@ class TimeStampedModel(models.Model):
 
 
 class PublicModel(models.Model):
-    is_punished = models.BooleanField(default=False)
+    is_published = models.BooleanField(default=True)
 
     class Meta:
         abstract = True
