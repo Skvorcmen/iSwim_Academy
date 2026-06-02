@@ -22,11 +22,7 @@ THIRD_PARTY_APPS = [
     "crispy_bootstrap5",
 ]
 
-LOCAL_APPS = [
-    "apps.core",
-    "apps.users",
-    "apps.branches",
-]
+LOCAL_APPS = ["apps.core", "apps.users", "apps.branches", "apps.staff"]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
