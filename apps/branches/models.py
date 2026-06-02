@@ -12,6 +12,7 @@ class Branch(TimeStampedModel, PublicModel, SEOMixin):
     manager_name = models.CharField(max_length=100, blank=True)
     manager_photo = models.ImageField(upload_to="seo/manager/", blank=True)
     photo = models.ImageField(upload_to="branches/", blank=True)
+    is_active = models.BooleanField(default=True)
 
     class Meta:
         verbose_name = "Филиал"

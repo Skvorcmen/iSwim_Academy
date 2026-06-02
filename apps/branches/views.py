@@ -4,12 +4,12 @@ from apps.branches.models import Branch
 
 class BranchListView(ListView):
     model = Branch
-    template_name = "branches/list.html"
+    template_name = "branches/branch_list.html"
     context_object_name = "branches"
     queryset = Branch.objects.filter(is_published=True)
 
 
 class BranchDetailView(DetailView):
     model = Branch
-    template_name = "branches/detail.html"
+    template_name = "branches/branch_detail.html"
     context_object_name = "branch"

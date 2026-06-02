@@ -1,15 +1,8 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <title>iSwim</title>
-</head>
-  <li>
-    iSwim Филиалы Тренеры Новости
-  </li>
-<body>
-  <main>
-    {% block content %}{% endblock %}
-  </main>
-</body>
-</html>
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="text-center mt-5">
+    <h1>Добро пожаловать в академию плавания iSwim</h1>
+    <p class="lead">Профессиональное обучение плаванию</p>
+</div>
+{% endblock %}

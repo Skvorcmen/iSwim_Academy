@@ -10,7 +10,7 @@ class BranchAdmin(admin.ModelAdmin):
         "phone",
         "is_published",
     )
-    list_filter = ("is_published",)
+    list_filter = ("is_active",)
     list_fields = (
         "name",
         "city",

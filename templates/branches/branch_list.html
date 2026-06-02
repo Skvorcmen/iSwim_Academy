@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Наши филиалы</h2>
+
+{% for branch in branches %}
+    <div style="border:1px solid #ccc; margin:10px; padding:10px">
+        <b>{{ branch.name }}</b><br>
+        📍 {{ branch.city }}, {{ branch.address }}<br>
+        📞 {{ branch.phone }}<br>
+        👤 {{ branch.manager_name }}<br>
+        <a href="/branches/{{ branch.id }}/">Подробнее</a>
+    </div>
+{% empty %}
+    <p>Нет филиалов</p>
+{% endfor %}
+
+<a href="/">← На главную</a>
+{% endblock %}
