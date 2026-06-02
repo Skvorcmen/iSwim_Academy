@@ -1,3 +1,15 @@
-from django.shortcuts import render
+from django.views.generic import ListView, DetailView
+from apps.branches.models import Branch
 
-# Create your views here.
+
+class BranchListView(ListView):
+    model = Branch
+    template_name = "branches/list.html"
+    context_object_name = "branches"
+    queryset = Branch.objects.filter(is_published=True)
+
+
+class BranchDetailView(DetailView):
+    model = Branch
+    template_name = "branches/detail.html"
+    context_object_name = "branch"
