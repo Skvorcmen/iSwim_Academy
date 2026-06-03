@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>{{ program.name }}</h1>
+<p><strong>Возраст:</strong> {{ program.age_from }}-{{ program.age_to }} лет</p>
+<p><strong>Цена:</strong> {{ program.price }} руб.</p>
+<p>{{ program.description|linebreaks }}</p>
+<a href="{% url 'program_list' %}">← Назад к программам</a>
+{% endblock %}

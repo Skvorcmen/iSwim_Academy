@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Тренеры</h1>
+
+{% for coach in coaches %}
+<div style="border:1px solid #ccc; margin:10px; padding:10px">
+    <h2>{{ coach.name }}</h2>
+    <p>{{ coach.position }}</p>
+    <a href="/coaches/{{ coach.id }}/">Подробнее</a>
+</div>
+{% empty %}
+<p>Тренеры скоро появятся</p>
+{% endfor %}
+{% endblock %}

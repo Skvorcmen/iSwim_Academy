@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Программы обучения</h1>
+
+{% for program in programs %}
+<div style="border:1px solid #ccc; margin:15px 0; padding:15px; border-radius:8px">
+    <h2>{{ program.name }}</h2>
+    <p><strong>Возраст:</strong> {{ program.age_from }}-{{ program.age_to }} лет</p>
+    <p><strong>Цена:</strong> {{ program.price }} руб.</p>
+    <p>{{ program.description|truncatewords:20 }}</p>
+    <a href="{% url 'program_detail' program.slug %}" class="btn btn-primary">Подробнее</a>
+</div>
+{% empty %}
+<p>Программы обучения скоро появятся</p>
+{% endfor %}
+
+<a href="/">← На главную</a>
+{% endblock %}

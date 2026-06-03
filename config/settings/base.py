@@ -29,6 +29,7 @@ LOCAL_APPS = [
     "apps.staff",
     "apps.news",
     "apps.pages",
+    "apps.education",
 ]
 
 

@@ -1,6 +1,4 @@
 from django.urls import path
-from django.views.generic import DetailView
-
 from apps.branches.views import BranchListView, BranchDetailView
 
 urlpatterns = [

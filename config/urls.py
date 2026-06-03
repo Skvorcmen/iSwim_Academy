@@ -17,11 +17,18 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path, include
-
+from django.conf import settings
 from apps.pages.views import HomeView
+from django.conf.urls.static import static
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("", include("apps.pages.urls")),
     path("branches/", include("apps.branches.urls")),
+    path("news/", include("apps.news.urls")),
+    path("coaches/", include("apps.staff.urls")),
+    path("educations/", include("apps.education.urls")),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

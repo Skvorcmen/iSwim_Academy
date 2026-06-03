@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>{{ news.title }}</h1>
+<p>{{ news.created_at|date:"d.m.Y" }}</p>
+{% if news.cover_image %}
+    <img src="{{ news.cover_image.url }}" alt="{{ news.title }}">
+{% endif %}
+{% if news.image %}
+    <img src="{{ news.image.url }}" alt="{{ news.title }}" style="max-width:100%; height:auto;">
+{% else %}
+    <p><em>Нет изображения</em></p>
+{% endif %}
+
+<p>{{ news.content|linebreaks }}</p>
+
+<a href="/news/">← Назад к новостям</a>
+{% endblock %}
