@@ -1,0 +1,24 @@
+:root {
+    --iswim-blue: #0066CC;
+    --iswim-dark: #003366;
+}
+
+body {
+    background-image: url('../images/pool-bg.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+main {
+    background: rgba(255, 255, 255, 0.92);
+    flex: 1;
+}
+
+footer {
+    position: relative;
+    z-index: 1;
+}

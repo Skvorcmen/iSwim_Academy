@@ -1,8 +1,50 @@
 {% extends 'base.html' %}
 
+{% block title %}{{ coach.first_name }} {{ coach.last_name }} — iSwim{% endblock %}
+
 {% block content %}
-<h1>{{ coach.name }}</h1>
-<p>{{ coach.position }}</p>
-<p>{{ coach.bio }}</p>
-<a href="/coaches/">← Назад</a>
+<div class="row justify-content-center">
+    <div class="col-md-8">
+
+        <a href="{% url 'coach_list' %}" class="text-muted small">← Назад к тренерам</a>
+
+        <div class="d-flex align-items-center gap-4 mt-3 mb-4">
+            {% if coach.photo %}
+            <img src="{{ coach.photo.url }}"
+                 alt="{{ coach.first_name }}"
+                 class="rounded-circle"
+                 style="width: 120px; height: 120px; object-fit: cover; object-position: top;">
+            {% endif %}
+            <div>
+                <h1 class="mb-1">{{ coach.first_name }} {{ coach.last_name }}</h1>
+                {% if coach.specialization %}
+                <p class="text-muted mb-1">{{ coach.specialization }}</p>
+                {% endif %}
+                {% if coach.branch %}
+                <p class="text-muted small mb-0">
+                    <i class="fas fa-map-marker-alt"></i> {{ coach.branch }}
+                </p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="card p-3 mb-4">
+            <div class="row text-center">
+                {% if coach.experience_years %}
+                <div class="col">
+                    <p class="fs-4 fw-bold text-primary mb-0">{{ coach.experience_years }}</p>
+                    <p class="text-muted small mb-0">лет опыта</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        {% if coach.bio %}
+        <div class="fs-5 lh-lg">
+            {{ coach.bio|linebreaks }}
+        </div>
+        {% endif %}
+
+    </div>
+</div>
 {% endblock %}

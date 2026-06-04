@@ -1,19 +1,37 @@
 {% extends 'base.html' %}
 
+{% block title %}Филиалы — iSwim{% endblock %}
+
 {% block content %}
-<h2>Наши филиалы</h2>
+<h1 class="mb-4">Наши филиалы</h1>
 
+<div class="row g-4">
 {% for branch in branches %}
-    <div style="border:1px solid #ccc; margin:10px; padding:10px">
-        <b>{{ branch.name }}</b><br>
-        📍 {{ branch.city }}, {{ branch.address }}<br>
-        📞 {{ branch.phone }}<br>
-        👤 {{ branch.manager_name }}<br>
-        <a href="/branches/{{ branch.id }}/">Подробнее</a>
+<div class="col-md-4">
+    <div class="card h-100 shadow-sm">
+        {% if branch.photo %}
+        <img src="{{ branch.photo.url }}" class="card-img-top" alt="{{ branch.name }}" style="height: 200px; object-fit: cover;">
+        {% else %}
+        <div style="height: 200px; background: #e9f0fb; display: flex; align-items: center; justify-content: center;">
+            <i class="fas fa-swimming-pool fa-3x text-muted"></i>
+        </div>
+        {% endif %}
+        <div class="card-body d-flex flex-column">
+            <h5 class="card-title">{{ branch.name }}</h5>
+            <p class="text-muted small mb-1">
+                <i class="fas fa-map-marker-alt"></i> {{ branch.city }}, {{ branch.address }}
+            </p>
+            <p class="text-muted small mb-1">
+                <i class="fas fa-phone"></i> {{ branch.phone }}
+            </p>
+            <a href="{% url 'branch-detail' branch.pk %}" class="btn btn-outline-primary mt-auto">Подробнее →</a>
+        </div>
     </div>
+</div>
 {% empty %}
-    <p>Нет филиалов</p>
+<div class="col">
+    <p class="text-muted">Филиалов пока нет</p>
+</div>
 {% endfor %}
-
-<a href="/">← На главную</a>
+</div>
 {% endblock %}

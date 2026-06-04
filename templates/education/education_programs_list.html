@@ -1,19 +1,33 @@
 {% extends 'base.html' %}
 
-{% block content %}
-<h1>Программы обучения</h1>
+{% block title %}Программы обучения — iSwim{% endblock %}
 
+{% block content %}
+<h1 class="mb-4">Программы обучения</h1>
+
+<div class="row g-4">
 {% for program in programs %}
-<div style="border:1px solid #ccc; margin:15px 0; padding:15px; border-radius:8px">
-    <h2>{{ program.name }}</h2>
-    <p><strong>Возраст:</strong> {{ program.age_from }}-{{ program.age_to }} лет</p>
-    <p><strong>Цена:</strong> {{ program.price }} руб.</p>
-    <p>{{ program.description|truncatewords:20 }}</p>
-    <a href="{% url 'program_detail' program.slug %}" class="btn btn-primary">Подробнее</a>
+<div class="col-md-4">
+    <div class="card h-100 shadow-sm">
+        {% if program.photo %}
+            <img src="{{ program.photo.url }}" class="card-img-top" alt="{{ program.name }}" style="height: 200px; object-fit: cover;">
+            {% else %}
+            <div style="height: 200px; background: #e9f0fb; display: flex; align-items: center; justify-content: center;">
+                <i class="fas fa-swimming-pool fa-3x text-muted"></i>
+            </div>
+            {% endif %}
+        <div class="card-body d-flex flex-column">
+            <h5 class="card-title">{{ program.name }}</h5>
+            <p class="card-text text-muted">{{ program.description|truncatewords:20 }}</p>
+            <p class="fw-bold text-primary mt-auto mb-2">{{ program.price }} руб.</p>
+            <a href="{% url 'program_detail' program.slug %}" class="btn btn-outline-primary">Подробнее →</a>
+        </div>
+    </div>
 </div>
 {% empty %}
-<p>Программы обучения скоро появятся</p>
+<div class="col">
+    <p class="text-muted">Программы обучения скоро появятся</p>
+</div>
 {% endfor %}
-
-<a href="/">← На главную</a>
+</div>
 {% endblock %}

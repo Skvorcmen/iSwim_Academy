@@ -1,9 +1,32 @@
 {% extends 'base.html' %}
 
+{% block title %}{{ program.name }} — iSwim{% endblock %}
+
 {% block content %}
-<h1>{{ program.name }}</h1>
-<p><strong>Возраст:</strong> {{ program.age_from }}-{{ program.age_to }} лет</p>
-<p><strong>Цена:</strong> {{ program.price }} руб.</p>
-<p>{{ program.description|linebreaks }}</p>
-<a href="{% url 'program_list' %}">← Назад к программам</a>
+<div class="row justify-content-center">
+    <div class="col-md-8">
+
+        <a href="{% url 'program_list' %}" class="text-muted small">← Назад к программам</a>
+
+        <h1 class="mt-3 mb-1">{{ program.name }}</h1>
+        
+
+        {% if program.photo %}
+        <img src="{{ program.photo.url }}"
+             alt="{{ program.name }}"
+             class="img-fluid rounded mb-4"
+             style="max-height: 400px; width: 100%; object-fit: cover;">
+        {% endif %}
+
+        <div class="fs-5 lh-lg mb-4">
+            {{ program.description|linebreaks }}
+        </div>
+
+        <div class="card p-3 mb-4">
+            <h5>Стоимость</h5>
+            <p class="fs-4 fw-bold text-primary mb-0">{{ program.price }} руб.</p>
+        </div>
+
+    </div>
+</div>
 {% endblock %}

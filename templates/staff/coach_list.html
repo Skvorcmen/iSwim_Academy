@@ -1,15 +1,37 @@
 {% extends 'base.html' %}
 
-{% block content %}
-<h1>Тренеры</h1>
+{% block title %}Тренеры — iSwim{% endblock %}
 
+{% block content %}
+<h1 class="mb-4">Наши тренеры</h1>
+
+<div class="row g-4">
 {% for coach in coaches %}
-<div style="border:1px solid #ccc; margin:10px; padding:10px">
-    <h2>{{ coach.name }}</h2>
-    <p>{{ coach.position }}</p>
-    <a href="/coaches/{{ coach.id }}/">Подробнее</a>
+<div class="col-md-4">
+    <div class="card h-100 shadow-sm">
+        {% if coach.photo %}
+        <img src="{{ coach.photo.url }}" class="card-img-top" alt="{{ coach.first_name }}" style="height: 250px; object-fit: cover; object-position: top;">
+        {% else %}
+        <div style="height: 250px; background: #e9f0fb; display: flex; align-items: center; justify-content: center;">
+            <i class="fas fa-user fa-3x text-muted"></i>
+        </div>
+        {% endif %}
+        <div class="card-body d-flex flex-column">
+            <h5 class="card-title">{{ coach.first_name }} {{ coach.last_name }}</h5>
+            {% if coach.specialization %}
+            <p class="text-muted small mb-1">{{ coach.specialization }}</p>
+            {% endif %}
+            {% if coach.experience_years %}
+            <p class="text-muted small mb-2">Опыт: {{ coach.experience_years }} лет</p>
+            {% endif %}
+            <a href="{% url 'coach_detail' coach.pk %}" class="btn btn-outline-primary mt-auto">Подробнее →</a>
+        </div>
+    </div>
 </div>
 {% empty %}
-<p>Тренеры скоро появятся</p>
+<div class="col">
+    <p class="text-muted">Тренеры скоро появятся</p>
+</div>
 {% endfor %}
+</div>
 {% endblock %}

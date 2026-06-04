@@ -1,20 +1,33 @@
 {% extends 'base.html' %}
 
+{% block title %}Новости — iSwim{% endblock %}
+
 {% block content %}
-<h1>Новости</h1>
+<h1 class="mb-4">Новости</h1>
 
+<div class="row g-4">
 {% for item in news_list %}
-<div>
-    <img src="{{ item.cover_image.url }}" alt="{{ item.title }}" width="200", height="200">
-    <h2>{{ item.title }}</h2>
-    <p>{{ item.created_at|date:"d.m.Y" }}</p>
-    <p>{{ item.content|truncatewords:20 }}</p>
-    <a href="/news/{{ item.id }}/">Читать →</a>
+<div class="col-md-4">
+    <div class="card h-100 shadow-sm">
+        {% if item.cover_image %}
+        <img src="{{ item.cover_image.url }}" class="card-img-top" alt="{{ item.title }}" style="height: 200px; object-fit: cover;">
+        {% else %}
+        <div style="height: 200px; background: #e9f0fb; display: flex; align-items: center; justify-content: center;">
+            <i class="fas fa-newspaper fa-3x text-muted"></i>
+        </div>
+        {% endif %}
+        <div class="card-body d-flex flex-column">
+            <p class="text-muted small mb-1">{{ item.created_at|date:"d.m.Y" }}</p>
+            <h5 class="card-title">{{ item.title }}</h5>
+            <p class="card-text text-muted">{{ item.content|truncatewords:20 }}</p>
+            <a href="{% url 'news-detail' item.slug %}" class="btn btn-outline-primary mt-auto">Читать →</a>
+        </div>
+    </div>
 </div>
-<hr>
 {% empty %}
-<p>Новостей пока нет</p>
+<div class="col">
+    <p class="text-muted">Новостей пока нет</p>
+</div>
 {% endfor %}
-
-<a href="/">← На главную</a>
+</div>
 {% endblock %}
