@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block title %}Вы вышли — iSwim{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center text-center">
+    <div class="col-md-5">
+        <h1 class="mb-3">Вы вышли из системы</h1>
+        <p class="text-muted mb-4">До свидания! Будем рады видеть вас снова.</p>
+        <a href="{% url 'login' %}" class="btn btn-primary me-2">Войти снова</a>
+        <a href="{% url 'home' %}" class="btn btn-outline-secondary">На главную</a>
+    </div>
+</div>
+{% endblock %}

@@ -7,6 +7,9 @@ DEBUG = config("DEBUG", cast=bool)
 ALLOWED_HOSTS = config(
     "ALLOWED_HOSTS", cast=lambda v: [s.strip() for s in v.split(",")]
 )
+LOGIN_URL = "/accounts/login"
+LOGIN_REDIRECT_URL = "/accounts/profile"
+LOGAUT_REDIRECT_URL = "/"
 
 DJANGO_APPS = [
     "django.contrib.admin",

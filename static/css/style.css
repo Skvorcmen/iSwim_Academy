@@ -11,14 +11,50 @@ body {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+    font-family: 'Montserrat', sans-serif;
 }
 
 main {
-    background: rgba(255, 255, 255, 0.92);
+    background: transparent;
     flex: 1;
+    padding: 2rem 0;
+}
+
+main .container {
+    max-width: 960px;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 12px;
+    padding: 2rem;
 }
 
 footer {
     position: relative;
     z-index: 1;
+}
+
+.navbar {
+    background-color: #003366 !important;
+}
+
+.navbar .nav-link {
+    color: rgba(255, 255, 255, 0.85) !important;
+    padding: 6px 12px !important;
+    border-radius: 6px;
+    transition: all 0.2s;
+}
+
+.navbar .nav-link:hover {
+    color: white !important;
+    background: rgba(255, 255, 255, 0.15);
+    border-bottom: none;
+}
+
+.navbar-brand i {
+    display: inline-block;
+    transform: scaleX(-1);
+}
+
+footer .fa-swimmer {
+    display: inline-block;
+    transform: scaleX(-1);
 }

@@ -28,6 +28,8 @@ urlpatterns = [
     path("news/", include("apps.news.urls")),
     path("coaches/", include("apps.staff.urls")),
     path("educations/", include("apps.education.urls")),
+    path("accounts/", include("apps.users.urls")),
+    path("accounts/", include("django.contrib.auth.urls")),
 ]
 
 if settings.DEBUG:

@@ -6,10 +6,10 @@
 <div class="row justify-content-center">
     <div class="col-md-8">
 
-        <a href="{% url 'program_list' %}" class="text-muted small">← Назад к программам</a>
+        <a href="{% url 'education_program_list' %}" class="text-muted small">← Назад к программам</a>
 
         <h1 class="mt-3 mb-1">{{ program.name }}</h1>
-        
+
 
         {% if program.photo %}
         <img src="{{ program.photo.url }}"
