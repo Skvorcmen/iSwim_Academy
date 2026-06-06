@@ -2,8 +2,24 @@
 
 {% block title %}Новости — iSwim{% endblock %}
 
+
 {% block content %}
-<h1 class="mb-4">Новости</h1>
+<div class="mb-4 pb-3" style="border-bottom: 3px solid #0066CC;">
+    <h1 class="mb-0">Новости</h1>
+    <p class="text-muted mt-1 mb-0">Новости мира плавания</p>
+</div>
+<div class="d-flex gap-2 flex-wrap mb-4">
+    <a href="{% url 'news-list' %}"
+       class="btn btn-sm {% if not current_category %}btn-primary{% else %}btn-outline-primary{% endif %}">
+        Все
+    </a>
+    {% for category in categories %}
+    <a href="{% url 'news-list' %}?category={{ category.slug }}"
+       class="btn btn-sm {% if current_category == category.slug %}btn-primary{% else %}btn-outline-primary{% endif %}">
+        {{ category.name }}
+    </a>
+    {% endfor %}
+</div>
 
 <div class="row g-4">
 {% for item in news_list %}
@@ -18,9 +34,16 @@
         {% endif %}
         <div class="card-body d-flex flex-column">
             <p class="text-muted small mb-1">{{ item.created_at|date:"d.m.Y" }}</p>
-            <h5 class="card-title">{{ item.title }}</h5>
-            <p class="card-text text-muted">{{ item.content|truncatewords:20 }}</p>
-            <a href="{% url 'news-detail' item.slug %}" class="btn btn-outline-primary mt-auto">Читать →</a>
+            {% if item.category %}
+            <span class="badge mb-2" style="background: rgba(0,102,204,0.1); color: #0066CC;">
+                {{ item.category }}
+            </span>
+            {% endif %}
+            <h5 class="card-title fw-bold" style="color: #003366;">{{ item.title }}</h5>
+            <p class="card-text text-muted">{{ item.content|truncatewords:12 }}</p>
+            <a href="{% url 'news-detail' item.slug %}" class="mt-auto text-primary fw-semibold" style="text-decoration: none;">
+                Читать статью →
+            </a>
         </div>
     </div>
 </div>
