@@ -1,11 +1,7 @@
 from django.urls import path
-from apps.education.views import EducationProgramListView, EducationProgramDetailView
+from apps.education.views import ArticleListView, ArticleDetailView
 
 urlpatterns = [
-    path("", EducationProgramListView.as_view(), name="education_program_list"),
-    path(
-        "<slug:slug>/",
-        EducationProgramDetailView.as_view(),
-        name="education_program_detail",
-    ),
+    path("", ArticleListView.as_view(), name="article_list"),
+    path("<slug:slug>/", ArticleDetailView.as_view(), name="article_detail"),
 ]

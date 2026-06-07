@@ -21,16 +21,11 @@ main {
 }
 
 main .container {
-    max-width: 960px;
     background: rgba(255, 255, 255, 0.95);
     border-radius: 12px;
     padding: 2rem;
 }
 
-footer {
-    position: relative;
-    z-index: 1;
-}
 
 .navbar {
     background-color: #003366 !important;
@@ -54,7 +49,22 @@ footer {
     transform: scaleX(-1);
 }
 
+
+.section-divider {
+    border: none;
+    border-top: 1px solid rgba(0, 102, 204, 0.15);
+    margin: 2rem 0;
+}
+
 footer .fa-swimmer {
     display: inline-block;
     transform: scaleX(-1);
+    position: relative;
+    z-index: 1;
 }
+
+footer .container {
+    max-width: 960px;
+    margin: 0 auto;
+}
+

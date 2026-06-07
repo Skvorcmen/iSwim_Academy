@@ -5,16 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}iSwim Академия плавания{% endblock %}</title>
-
-
-    <!-- Bootstrap 5 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome (иконки) -->
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
-    <!-- Свой CSS -->
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
@@ -25,19 +19,16 @@
             <a class="navbar-brand" href="{% url 'home' %}">
                 <i class="fas fa-swimmer"></i> iSwim Academy
             </a>
-
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
-
             <div class="collapse navbar-collapse" id="navbarNav">
-    <!-- Основные ссылки — по центру -->
                 <ul class="navbar-nav mx-auto">
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'news-list' %}">Новости</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'education_program_list' %}">Обучение</a>
+                        <a class="nav-link" href="{% url 'article_list' %}">Библиотека</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'branch-list' %}">Филиалы</a>
@@ -52,41 +43,21 @@
                         <a class="nav-link" href="{% url 'contacts' %}">Контакты</a>
                     </li>
                 </ul>
-
-    <!-- Кнопка входа — справа -->
-    <ul class="navbar-nav">
-        <li class="nav-item">
-            {% if user.is_authenticated %}
-            <div class="navbar-nav">
-                <a class="btn btn-outline-light btn-sm rounded-pill px-3" href="{% url 'profile' %}">
-                {{ user.username }}
-            </a>
-            </div>
-            {% else %}
-            <ul class="navbar-nav">
-                {% if user.is_authenticated %}
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="btn btn-outline-light btn-sm rounded-pill px-3" href="{% url 'profile' %}">
-                            {{ user.username }}
-                        </a>
-                    </li>
-                </ul>
-                {% else %}
                 <ul class="navbar-nav gap-2">
+                    {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="btn btn-outline-light btn-sm rounded-pill px-3" href="{% url 'profile' %}">{{ user.username }}</a>
+                    </li>
+                    {% else %}
                     <li class="nav-item">
                         <a class="btn btn-outline-light btn-sm rounded-pill px-3" href="{% url 'login' %}">Войти</a>
                     </li>
                     <li class="nav-item">
                         <a class="btn btn-outline-light btn-sm rounded-pill px-3" href="{% url 'register' %}">Регистрация</a>
                     </li>
+                    {% endif %}
                 </ul>
-                {% endif %}
-            </ul>
-            {% endif %}
-        </li>
-    </ul>
-</div>
+            </div>
         </div>
     </nav>
 
@@ -99,37 +70,52 @@
     </main>
 
     <!-- ПОДВАЛ -->
-    <footer class="text-white py-4 mt-5" style="background-color: #003366;">
+    <footer class="text-white py-5" style="background-color: #003366;">
         <div class="container">
-            <div class="row">
-                <div class="col-md-4">
-                    <h5><i class="fas fa-swimmer"></i> iSwim Академия</h5>
-                    <p>Профессиональное обучение плаванию с 2010 года</p>
+            <div class="row g-4 justify-content-between px-3">
+                <div class="col-md-3">
+                    <h5 class="fw-bold mb-3">
+                        <i class="fas fa-swimmer me-2"></i>iSwim Академия
+                    </h5>
+                    <p class="text-white-50 mb-3">Обучение плаванию<br>с 2022 года</p>
+                    <div class="d-flex gap-3">
+                        <a href="#" class="text-white"><i class="bi bi-instagram" style="font-size: 22px;"></i></a>
+                        <a href="#" class="text-white"><i class="bi bi-whatsapp" style="font-size: 22px;"></i></a>
+                        <a href="#" class="text-white"><i class="bi bi-youtube" style="font-size: 22px;"></i></a>
+                    </div>
                 </div>
-                <div class="col-md-4">
-                    <h5>Контакты</h5>
-                    <p>
-                        <i class="fas fa-phone"></i> +7 (495) 123-45-67<br>
-                        <i class="fas fa-envelope"></i> info@iswim.kz<br>
-                        <i class="fas fa-map-marker-alt"></i> г. Астана
+                <div class="col-md-3">
+                    <h5 class="fw-bold mb-3">Контакты</h5>
+                    <p class="text-white-50 mb-1">
+                        <i class="fas fa-phone me-2"></i>+7 (495) 123-45-67
+                    </p>
+                    <p class="text-white-50 mb-1">
+                        <i class="fas fa-envelope me-2"></i>info@iswim.kz
+                    </p>
+                    <p class="text-white-50 mb-0">
+                        <i class="fas fa-map-marker-alt me-2"></i>Астана и Алматы
                     </p>
                 </div>
-                <div class="col-md-4">
-                    <h5>Следите за нами</h5>
-                    <a href="#" class="text-white me-2"><i class="fab fa-vk fa-2x"></i></a>
-                    <a href="#" class="text-white me-2"><i class="fab fa-telegram fa-2x"></i></a>
-                    <a href="#" class="text-white"><i class="fab fa-youtube fa-2x"></i></a>
+                <div class="col-md-3">
+                    <h5 class="fw-bold mb-3">Навигация</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-1"><a href="{% url 'news-list' %}" class="text-white-50 text-decoration-none">Новости</a></li>
+                        <li class="mb-1"><a href="{% url 'article_list' %}" class="text-white-50 text-decoration-none">Библиотека</a></li>
+                        <li class="mb-1"><a href="{% url 'branch-list' %}" class="text-white-50 text-decoration-none">Филиалы</a></li>
+                        <li class="mb-1"><a href="{% url 'coach_list' %}" class="text-white-50 text-decoration-none">Тренеры</a></li>
+                        <li class="mb-1"><a href="{% url 'about' %}" class="text-white-50 text-decoration-none">О нас</a></li>
+                        <li class="mb-1"><a href="{% url 'contacts' %}" class="text-white-50 text-decoration-none">Контакты</a></li>
+                    </ul>
                 </div>
             </div>
-            <div class="text-center mt-3">
-                <p class="mb-0">&copy; {% now "Y" %} iSwim Академия плавания. Все права защищены.</p>
+            <hr style="border-color: rgba(255,255,255,0.15);" class="mt-4">
+            <div class="text-center">
+                <p class="text-white-50 mb-0">&copy; {% now "Y" %} iSwim Академия плавания. Все права защищены.</p>
             </div>
         </div>
     </footer>
 
-    <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Свой JS -->
     <script src="{% static 'js/script.js' %}"></script>
 </body>
 </html>

@@ -1,12 +1,100 @@
 {% extends 'base.html' %}
 
+{% block title %}О нас — iSwim{% endblock %}
+
 {% block content %}
-<h2>О нас</h2>
-<p>Академия плавания iSwim - лидер в обучении плаванию с 2020 года.</p>
-<p>Наши преимущества:</p>
-<ul>
-    <li>6 филиалов по Казахстану</li>
-    <li>50+ опытных тренеров</li>
-    <li>Современные бассейны</li>
-</ul>
+
+<!-- Hero -->
+<div class="text-center py-4 mb-4 pb-3" style="border-bottom: 3px solid #0066CC;">
+    <h1 class="mb-2">О академии iSwim</h1>
+    <p class="lead text-muted">Профессиональное обучение плаванию в Казахстане</p>
+</div>
+
+<!-- История -->
+<div class="row justify-content-center mb-5">
+    <div class="col-md-8">
+        <h4 style="color: #003366;">Наша история</h4>
+        <div style="font-size: 17px; line-height: 1.8; color: #2c2c2c;">
+            <p>Академия плавания iSwim основана в 2022 году в Астане. За 3 года мы стали одной из самых быстрорастущих школ плавания в Казахстане.</p>
+            <p>Сегодня iSwim — это уже несколько филиалов в Астане и Алматы, команда профессиональных тренеров и более 20 000 довольных клиентов. Такой результат за столь короткий срок — это не случайность, а следствие правильного подхода к обучению и искренней заботы о каждом ученике.</p>
+            <p>Мы верим что плавание — это не просто спорт. Это навык, который остаётся на всю жизнь, дисциплина которая формирует характер, и среда где рождается настоящая дружба.</p>
+        </div>
+    </div>
+</div>
+
+<hr class="section-divider">
+
+<!-- Ценности -->
+<div class="row g-4 mb-5">
+    <div class="col-md-3">
+        <div class="card h-100 shadow-sm text-center p-3">
+            <i class="fas fa-graduation-cap fa-2x text-primary mb-3"></i>
+            <h6 class="fw-bold" style="color: #003366;">Собственная школа тренеров</h6>
+            <p class="text-muted small mb-0">Каждый тренер iSwim проходит внутреннее обучение по нашей авторской методике</p>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card h-100 shadow-sm text-center p-3">
+            <i class="fas fa-book-open fa-2x text-primary mb-3"></i>
+            <h6 class="fw-bold" style="color: #003366;">Авторская методика</h6>
+            <p class="text-muted small mb-0">Наши программы разработаны на основе биомеханики и спортивной науки — не просто опыт, а система</p>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card h-100 shadow-sm text-center p-3">
+            <i class="fas fa-user-check fa-2x text-primary mb-3"></i>
+            <h6 class="fw-bold" style="color: #003366;">Индивидуальный подход</h6>
+            <p class="text-muted small mb-0">Каждый ученик получает программу с учётом его уровня подготовки, возраста и целей</p>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card h-100 shadow-sm text-center p-3">
+            <i class="fas fa-trophy fa-2x text-primary mb-3"></i>
+            <h6 class="fw-bold" style="color: #003366;">Измеримый результат</h6>
+            <p class="text-muted small mb-0">Более 20 000 учеников уже достигли своих целей в воде вместе с iSwim</p>
+        </div>
+    </div>
+</div>
+
+<hr class="section-divider">
+
+<!-- Цифры -->
+<h2 class="mb-4">iSwim в цифрах</h2>
+<div class="row text-center g-3 mb-5">
+    <div class="col-md-3">
+        <div class="p-3 rounded" style="background: rgba(0,102,204,0.08);">
+            <div class="fs-2 fw-bold text-primary">3+</div>
+            <div class="text-muted small">года на рынке</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="p-3 rounded" style="background: rgba(0,102,204,0.08);">
+            <div class="fs-2 fw-bold text-primary">{{ branches_count }}</div>
+            <div class="text-muted small">филиалов</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="p-3 rounded" style="background: rgba(0,102,204,0.08);">
+            <div class="fs-2 fw-bold text-primary">{{ coaches_count }}</div>
+            <div class="text-muted small">тренеров</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="p-3 rounded" style="background: rgba(0,102,204,0.08);">
+            <div class="fs-2 fw-bold text-primary">20тыс +</div>
+            <div class="text-muted small">воспитанников</div>
+        </div>
+    </div>
+</div>
+
+<hr class="section-divider">
+
+<!-- CTA -->
+<div class="text-center py-4">
+    <h4 style="color: #003366;">Готовы начать?</h4>
+    <p class="text-muted mb-4">Найдите ближайший филиал и запишитесь на пробное занятие</p>
+    <a href="{% url 'branch-list' %}" class="btn btn-primary px-4 me-2">Найти филиал</a>
+    <a href="{% url 'contacts' %}" class="btn btn-outline-primary px-4">Связаться с нами</a>
+</div>
+
 {% endblock %}

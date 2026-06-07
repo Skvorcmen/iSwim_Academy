@@ -8,7 +8,7 @@
 <div class="text-center py-5">
     <h1 class="display-5 fw-bold">Академия плавания iSwim</h1>
     <p class="lead text-muted mb-4">Профессиональное обучение плаванию для всех возрастов</p>
-    <a href="{% url 'education_program_list' %}" class="btn btn-primary px-4 me-2">Программы обучения</a>
+    <a href="{% url 'article_list' %}" class="btn btn-primary px-4 me-2">Библиотека</a>
     <a href="{% url 'branch-list' %}" class="btn btn-outline-primary px-4">Найти филиал</a>
 </div>
 
@@ -16,7 +16,7 @@
 <div class="row text-center g-3 mb-5">
     <div class="col-md-3">
         <div class="p-3 rounded" style="background: rgba(0,102,204,0.08);">
-            <div class="fs-2 fw-bold text-primary">6</div>
+            <div class="fs-2 fw-bold text-primary">{{ branches_count }}</div>
             <div class="text-muted small">филиалов</div>
         </div>
     </div>
@@ -28,8 +28,8 @@
     </div>
     <div class="col-md-3">
         <div class="p-3 rounded" style="background: rgba(0,102,204,0.08);">
-            <div class="fs-2 fw-bold text-primary">{{ programs_count }}</div>
-            <div class="text-muted small">программ обучения</div>
+            <div class="fs-2 fw-bold text-primary">{{ articles_count }}</div>
+            <div class="text-muted small">статей в библиотеке</div>
         </div>
     </div>
     <div class="col-md-3">
@@ -55,9 +55,12 @@
             </div>
             {% endif %}
             <div class="card-body d-flex flex-column">
+                {% if item.category %}
+                <span class="badge mb-2" style="background: rgba(0,102,204,0.1); color: #0066CC;">{{ item.category }}</span>
+                {% endif %}
                 <p class="text-muted small mb-1">{{ item.created_at|date:"d.m.Y" }}</p>
                 <h6 class="card-title">{{ item.title }}</h6>
-                <a href="{% url 'news-detail' item.slug %}" class="btn btn-outline-primary btn-sm mt-auto">Читать →</a>
+                <a href="{% url 'news-detail' item.slug %}" class="mt-auto text-primary fw-semibold" style="text-decoration: none;">Читать →</a>
             </div>
         </div>
     </div>
@@ -67,28 +70,39 @@
     <a href="{% url 'news-list' %}" class="btn btn-outline-secondary">Все новости</a>
 </div>
 {% endif %}
+<hr class="section-divider">
 
-<!-- Программы обучения -->
-{% if programs %}
-<h2 class="mb-4">Программы обучения</h2>
+
+<!-- Библиотека -->
+{% if articles %}
+<h2 class="mb-4">Библиотека</h2>
 <div class="row g-4 mb-5">
-    {% for program in programs %}
+    {% for article in articles %}
     <div class="col-md-4">
         <div class="card h-100 shadow-sm">
+            {% if article.cover_image %}
+            <img src="{{ article.cover_image.url }}" class="card-img-top" alt="{{ article.title }}" style="height: 180px; object-fit: cover;">
+            {% else %}
+            <div style="height: 180px; background: #e9f0fb; display: flex; align-items: center; justify-content: center;">
+                <i class="fas fa-book-open fa-3x text-muted"></i>
+            </div>
+            {% endif %}
             <div class="card-body d-flex flex-column">
-                <h6 class="card-title">{{ program.name }}</h6>
-                <p class="card-text text-muted small">{{ program.description|truncatewords:15 }}</p>
-                <p class="fw-bold text-primary mt-auto mb-2">{{ program.price }} руб.</p>
-                <a href="{% url 'education_program_detail' program.slug %}" class="btn btn-outline-primary btn-sm">Подробнее →</a>
+                {% if article.category %}
+                <span class="badge mb-2" style="background: rgba(0,102,204,0.1); color: #0066CC;">{{ article.category }}</span>
+                {% endif %}
+                <h6 class="card-title fw-bold" style="color: #003366;">{{ article.title }}</h6>
+                <a href="{% url 'article_detail' article.slug %}" class="mt-auto text-primary fw-semibold" style="text-decoration: none;">Читать →</a>
             </div>
         </div>
     </div>
     {% endfor %}
 </div>
 <div class="text-center mb-5">
-    <a href="{% url 'education_program_list' %}" class="btn btn-outline-secondary">Все программы</a>
+    <a href="{% url 'article_list' %}" class="btn btn-outline-secondary">Вся библиотека</a>
 </div>
 {% endif %}
+<hr class="section-divider">
 
 <!-- Тренеры -->
 {% if coaches %}
@@ -107,6 +121,7 @@
             <div class="card-body">
                 <h6 class="card-title mb-1">{{ coach.first_name }} {{ coach.last_name }}</h6>
                 <p class="text-muted small mb-0">{{ coach.specialization }}</p>
+                <a href="{% url 'coach_list' %}" class="mt-auto text-primary fw-semibold" style="text-decoration: none;">Подробнее →</a>
             </div>
         </div>
     </div>
@@ -116,28 +131,41 @@
     <a href="{% url 'coach_list' %}" class="btn btn-outline-secondary">Все тренеры</a>
 </div>
 {% endif %}
+<hr class="section-divider">
 
+<!-- Филиалы -->
 <!-- Филиалы -->
 {% if branches %}
 <h2 class="mb-4">Наши филиалы</h2>
 <div class="row g-3 mb-4">
     {% for branch in branches %}
     <div class="col-md-4">
-        <div class="card shadow-sm">
+        <div class="card shadow-sm h-100">
+            {% if branch.photo %}
+            <img src="{{ branch.photo.url }}" class="card-img-top" alt="{{ branch.name }}" style="height: 160px; object-fit: cover;">
+            {% else %}
+            <div style="height: 160px; background: #e9f0fb; display: flex; align-items: center; justify-content: center;">
+                <i class="fas fa-swimming-pool fa-3x text-muted"></i>
+            </div>
+            {% endif %}
             <div class="card-body">
-                <h6 class="card-title">{{ branch.name }}</h6>
+                <h6 class="card-title fw-bold" style="color: #003366;">{{ branch.name }}</h6>
                 <p class="text-muted small mb-1">
-                    <i class="fas fa-map-marker-alt"></i> {{ branch.city }}, {{ branch.address }}
+                    <i class="fas fa-map-marker-alt me-1"></i>{{ branch.city }}, {{ branch.address }}
                 </p>
                 <p class="text-muted small mb-2">
-                    <i class="fas fa-phone"></i> {{ branch.phone }}
+                    <i class="fas fa-phone me-1"></i>{{ branch.phone }}
                 </p>
-                <a href="{% url 'branch-detail' branch.pk %}" class="btn btn-outline-primary btn-sm">Подробнее →</a>
+                <a href="{% url 'branch-detail' branch.pk %}" class="text-primary fw-semibold" style="text-decoration: none;">Подробнее →</a>
             </div>
         </div>
     </div>
     {% endfor %}
 </div>
+<div class="text-center mb-5">
+    <a href="{% url 'branch-list' %}" class="btn btn-outline-secondary">Все филиалы</a>
+</div>
 {% endif %}
+<hr class="section-divider">
 
 {% endblock %}
