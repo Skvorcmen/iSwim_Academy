@@ -18,7 +18,7 @@ class PublicModel(models.Model):
 
 class SEOMixin(models.Model):
     meta_title = models.CharField(max_length=255, blank=True)
-    meta_description = models.CharField(blank=True)
+    meta_description = models.TextField(blank=True)
 
     class Meta:
         abstract = True
