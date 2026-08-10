@@ -33,6 +33,8 @@ LOCAL_APPS = [
     "apps.news",
     "apps.pages",
     "apps.education",
+    "apps.competitions",
+    "apps.teams",
 ]
 
 
