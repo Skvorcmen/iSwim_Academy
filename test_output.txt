@@ -1,0 +1,124 @@
+Creating test database for alias 'default' ('file:memorydb_default?mode=memory&cache=shared')...
+Found 55 test(s).
+Operations to perform:
+  Synchronize unmigrated apps: crispy_bootstrap5, crispy_forms, messages, staticfiles
+  Apply all migrations: admin, auth, branches, contenttypes, education, news, sessions, staff, users
+Synchronizing apps without migrations:
+  Creating tables...
+    Running deferred SQL...
+Running migrations:
+  Applying contenttypes.0001_initial... OK
+  Applying contenttypes.0002_remove_content_type_name... OK
+  Applying auth.0001_initial... OK
+  Applying auth.0002_alter_permission_name_max_length... OK
+  Applying auth.0003_alter_user_email_max_length... OK
+  Applying auth.0004_alter_user_username_opts... OK
+  Applying auth.0005_alter_user_last_login_null... OK
+  Applying auth.0006_require_contenttypes_0002... OK
+  Applying auth.0007_alter_validators_add_error_messages... OK
+  Applying auth.0008_alter_user_username_max_length... OK
+  Applying auth.0009_alter_user_last_name_max_length... OK
+  Applying auth.0010_alter_group_name_max_length... OK
+  Applying auth.0011_update_proxy_permissions... OK
+  Applying auth.0012_alter_user_first_name_max_length... OK
+  Applying users.0001_initial... OK
+  Applying admin.0001_initial... OK
+  Applying admin.0002_logentry_remove_auto_add... OK
+  Applying admin.0003_logentry_add_action_flag_choices... OK
+  Applying branches.0001_initial... OK
+  Applying branches.0002_remove_branch_is_punished_branch_is_published... OK
+  Applying branches.0003_branch_manager_name_branch_manager_photo_and_more... OK
+  Applying branches.0004_branch_is_active... OK
+  Applying education.0001_initial... OK
+  Applying education.0002_educationprogram_branch... OK
+  Applying education.0003_articlecategory_remove_programschedule_program_and_more... OK
+  Applying news.0001_initial... OK
+  Applying news.0002_news_image... OK
+  Applying sessions.0001_initial... OK
+  Applying staff.0001_initial... OK
+  Applying users.0002_user_role...test_register_form_email_optional (tests.test_forms.RegisterFormTest.test_register_form_email_optional)
+Тест: email не обязателен ... ok
+test_register_form_invalid_role (tests.test_forms.RegisterFormTest.test_register_form_invalid_role)
+Тест: неверная роль ... ok
+test_register_form_missing_username (tests.test_forms.RegisterFormTest.test_register_form_missing_username)
+Тест: отсутствует username ... ok
+test_register_form_password_mismatch (tests.test_forms.RegisterFormTest.test_register_form_password_mismatch)
+Тест: пароли не совпадают ... ok
+test_register_form_short_password (tests.test_forms.RegisterFormTest.test_register_form_short_password)
+Тест: слишком короткий пароль ... ok
+test_register_form_valid (tests.test_forms.RegisterFormTest.test_register_form_valid)
+Тест: валидная форма регистрации ... ok
+test_branches_flow (tests.test_integration.FullUserJourneyTest.test_branches_flow)
+Тест: просмотр филиалов ... ok
+test_education_flow (tests.test_integration.FullUserJourneyTest.test_education_flow)
+Тест: просмотр статей ... ok
+test_home_page_flow (tests.test_integration.FullUserJourneyTest.test_home_page_flow)
+Тест: главная страница отображает все данные ... ok
+test_news_flow (tests.test_integration.FullUserJourneyTest.test_news_flow)
+Тест: просмотр новостей ... ok
+test_pages_flow (tests.test_integration.FullUserJourneyTest.test_pages_flow)
+Тест: статические страницы ... ok
+test_registration_flow (tests.test_integration.FullUserJourneyTest.test_registration_flow)
+Тест: регистрация пользователя ... ok
+test_staff_flow (tests.test_integration.FullUserJourneyTest.test_staff_flow)
+Тест: просмотр тренеров ... ok
+test_articles_filter_by_category (tests.test_integration.SearchAndFilterTest.test_articles_filter_by_category)
+Тест: фильтрация статей по категории ... ok
+test_news_filter_by_category (tests.test_integration.SearchAndFilterTest.test_news_filter_by_category)
+Тест: фильтрация новостей по категории ... ok
+test_article_creation (tests.test_models.ArticleModelTest.test_article_creation) ... ok
+test_branch_creation (tests.test_models.BranchModelTest.test_branch_creation) ... ok
+test_category_creation (tests.test_models.CategoryModelTest.test_category_creation) ... ok
+test_coach_creation (tests.test_models.CoachModelTest.test_coach_creation) ... ok
+test_timestamped_model_abstract (tests.test_models.CoreModelsTest.test_timestamped_model_abstract) ... ok
+test_news_creation (tests.test_models.NewsModelTest.test_news_creation) ... ok
+test_user_creation_with_role (tests.test_models.UserModelTest.test_user_creation_with_role) ... ok
+test_user_default_role (tests.test_models.UserModelTest.test_user_default_role) ... ok
+test_coach_list_query_optimization (tests.test_performance.DatabaseQueryOptimizationTest.test_coach_list_query_optimization)
+Тест: оптимизация запросов для списка тренеров ... ok
+test_news_list_query_optimization (tests.test_performance.DatabaseQueryOptimizationTest.test_news_list_query_optimization)
+Тест: оптимизация запросов для списка новостей ... ok
+test_article_list_performance (tests.test_performance.PerformanceTest.test_article_list_performance)
+Тест: производительность списка статей ... ok
+test_branches_list_performance (tests.test_performance.PerformanceTest.test_branches_list_performance)
+Тест: производительность списка филиалов ... ok
+test_coach_list_performance (tests.test_performance.PerformanceTest.test_coach_list_performance)
+Тест: производительность списка тренеров ... ok
+test_home_page_performance (tests.test_performance.PerformanceTest.test_home_page_performance)
+Тест: производительность главной страницы ... ok
+test_news_detail_performance (tests.test_performance.PerformanceTest.test_news_detail_performance)
+Тест: производительность деталей новости ... ok
+test_news_list_performance (tests.test_performance.PerformanceTest.test_news_list_performance)
+Тест: производительность списка новостей ... ok
+test_branch_detail_url (tests.test_urls.BranchesURLsTest.test_branch_detail_url) ... ok
+test_branch_list_url (tests.test_urls.BranchesURLsTest.test_branch_list_url) ... ok
+test_article_detail_url (tests.test_urls.EducationURLsTest.test_article_detail_url) ... ok
+test_article_list_url (tests.test_urls.EducationURLsTest.test_article_list_url) ... ok
+test_news_detail_url (tests.test_urls.NewsURLsTest.test_news_detail_url) ... ok
+test_news_list_url (tests.test_urls.NewsURLsTest.test_news_list_url) ... ok
+test_about_url (tests.test_urls.PagesURLsTest.test_about_url) ... ok
+test_contacts_url (tests.test_urls.PagesURLsTest.test_contacts_url) ... ok
+test_home_url (tests.test_urls.PagesURLsTest.test_home_url) ... ok
+test_coach_detail_url (tests.test_urls.StaffURLsTest.test_coach_detail_url) ... ok
+test_coach_list_url (tests.test_urls.StaffURLsTest.test_coach_list_url) ... ok
+test_profile_url (tests.test_urls.UsersURLsTest.test_profile_url) ... ok
+test_register_url (tests.test_urls.UsersURLsTest.test_register_url) ... ok
+test_article_detail_view (tests.test_views.ArticleViewsTest.test_article_detail_view) ... ok
+test_article_list_view (tests.test_views.ArticleViewsTest.test_article_list_view) ... ok
+test_branch_detail_view (tests.test_views.BranchViewsTest.test_branch_detail_view) ... ok
+test_branch_list_view (tests.test_views.BranchViewsTest.test_branch_list_view) ... ok
+test_coach_detail_view (tests.test_views.CoachViewsTest.test_coach_detail_view) ... ok
+test_coach_list_view (tests.test_views.CoachViewsTest.test_coach_list_view) ... ok
+test_news_detail_view (tests.test_views.NewsViewsTest.test_news_detail_view) ... ok
+test_news_list_view (tests.test_views.NewsViewsTest.test_news_list_view) ... ok
+test_about_view (tests.test_views.PagesViewsTest.test_about_view) ... ok
+test_contacts_view (tests.test_views.PagesViewsTest.test_contacts_view) ... ok
+test_home_view (tests.test_views.PagesViewsTest.test_home_view) ... ok
+
+----------------------------------------------------------------------
+Ran 55 tests in 4.260s
+
+OK
+Destroying test database for alias 'default' ('file:memorydb_default?mode=memory&cache=shared')...
+ OK
+System check identified no issues (0 silenced).

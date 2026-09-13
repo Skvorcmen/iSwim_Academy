@@ -1,0 +1,151 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Система соревнований{% endblock %} — iSwim</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.min.css">
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-image: url('/static/images/pool-bg.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        main .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            padding: 2rem;
+        }
+        .navbar { background-color: #003366 !important; }
+        .nav-link { color: rgba(255,255,255,0.85) !important; }
+        .nav-link:hover { color: white !important; }
+        main { flex: 1; padding: 2rem 0; }
+        .card { border: none; box-shadow: 0 2px 8px rgba(0,0,0,0.08); border-radius: 12px; }
+        .card-header { background-color: #003366; color: white; border-radius: 12px 12px 0 0 !important; font-weight: 600; }
+        .btn-primary { background-color: #0066CC; border-color: #0066CC; }
+        .btn-primary:hover { background-color: #003366; border-color: #003366; }
+        .badge-role { font-size: 12px; padding: 4px 10px; border-radius: 20px; }
+        .navbar-brand i {
+            display: inline-block;
+            transform: scaleX(-1);
+        }
+        footer .fa-swimmer {
+            display: inline-block;
+            transform: scaleX(-1);
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container">
+        <a class="navbar-brand" href="{% url 'home' %}">
+            <i class="fas fa-swimmer"></i> iSwim Academy
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav mx-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'news-list' %}">Новости</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'article_list' %}">Библиотека</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'competition_list' %}">Соревнования</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'branch-list' %}">Филиалы</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'coach_list' %}">Тренеры</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'about' %}">О нас</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'contacts' %}">Контакты</a>
+                </li>
+            </ul>
+            <a class="btn btn-outline-light btn-sm rounded-pill px-3" href="{% url 'profile' %}">{{ user.username }}</a>
+        </div>
+    </div>
+</nav>
+
+<main>
+    <div class="container">
+        {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show mt-3" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        {% endfor %}
+        {% endif %}
+
+        {% block content %}{% endblock %}
+    </div>
+</main>
+
+<footer class="text-white py-5" style="background-color: #003366;">
+    <div class="container">
+        <div class="row g-4 justify-content-between px-3">
+            <div class="col-md-3">
+                <h5 class="fw-bold mb-3">
+                    <i class="fas fa-swimmer me-2"></i>iSwim Академия
+                </h5>
+                <p class="text-white-50 mb-3">Обучение плаванию<br>с 2022 года</p>
+                <div class="d-flex gap-3">
+                    <a href="#" class="text-white"><i class="bi bi-instagram" style="font-size: 22px;"></i></a>
+                    <a href="#" class="text-white"><i class="bi bi-whatsapp" style="font-size: 22px;"></i></a>
+                    <a href="#" class="text-white"><i class="bi bi-youtube" style="font-size: 22px;"></i></a>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <h5 class="fw-bold mb-3">Контакты</h5>
+                <p class="text-white-50 mb-1">
+                    <i class="fas fa-phone me-2"></i>+7 (495) 123-45-67
+                </p>
+                <p class="text-white-50 mb-1">
+                    <i class="fas fa-envelope me-2"></i>info@iswim.kz
+                </p>
+                <p class="text-white-50 mb-0">
+                    <i class="fas fa-map-marker-alt me-2"></i>Астана и Алматы
+                </p>
+            </div>
+            <div class="col-md-3">
+                <h5 class="fw-bold mb-3">Навигация</h5>
+                <ul class="list-unstyled">
+                    <li class="mb-1"><a href="{% url 'news-list' %}" class="text-white-50 text-decoration-none">Новости</a></li>
+                    <li class="mb-1"><a href="{% url 'article_list' %}" class="text-white-50 text-decoration-none">Библиотека</a></li>
+                    <li class="mb-1"><a href="{% url 'branch-list' %}" class="text-white-50 text-decoration-none">Филиалы</a></li>
+                    <li class="mb-1"><a href="{% url 'coach_list' %}" class="text-white-50 text-decoration-none">Тренеры</a></li>
+                    <li class="mb-1"><a href="{% url 'about' %}" class="text-white-50 text-decoration-none">О нас</a></li>
+                    <li class="mb-1"><a href="{% url 'contacts' %}" class="text-white-50 text-decoration-none">Контакты</a></li>
+                </ul>
+            </div>
+        </div>
+        <hr style="border-color: rgba(255,255,255,0.15);" class="mt-4">
+        <div class="text-center">
+            <p class="text-white-50 mb-0">&copy; {% now "Y" %} iSwim Академия плавания. Все права защищены.</p>
+
+        </div>
+    </div>
+</footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

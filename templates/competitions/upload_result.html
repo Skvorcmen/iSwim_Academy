@@ -1,0 +1,59 @@
+{% extends 'base_competition.html' %}
+
+{% block title %}Результат загрузки — {{ competition.name }}{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <h1 class="mb-1">Результат загрузки заявки</h1>
+    <p class="text-muted">{{ competition.name }}</p>
+</div>
+
+<div class="row g-4">
+    <div class="col-md-6">
+        <div class="card border-success">
+            <div class="card-header bg-success text-white">
+                <i class="fas fa-check-circle me-2"></i>Успешно добавлено: {{ success }} спортсменов
+            </div>
+            {% if athletes %}
+            <div class="card-body p-0">
+                <ul class="list-group list-group-flush">
+                    {% for athlete in athletes %}
+                    <li class="list-group-item">
+                        <i class="fas fa-user me-2 text-success"></i>{{ athlete }}
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    {% if errors %}
+    <div class="col-md-6">
+        <div class="card border-danger">
+            <div class="card-header bg-danger text-white">
+                <i class="fas fa-exclamation-circle me-2"></i>Ошибки: {{ errors|length }}
+            </div>
+            <div class="card-body p-0">
+                <ul class="list-group list-group-flush">
+                    {% for error in errors %}
+                    <li class="list-group-item text-danger">
+                        <i class="fas fa-times me-2"></i>{{ error }}
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<div class="mt-4">
+    <a href="{% url 'upload_application' competition.id %}" class="btn btn-outline-primary me-2">
+        <i class="fas fa-upload me-2"></i>Загрузить ещё
+    </a>
+    <a href="{% url 'view_heats' competition.id %}" class="btn btn-primary">
+        <i class="fas fa-water me-2"></i>Перейти к заплывам
+    </a>
+</div>
+{% endblock %}

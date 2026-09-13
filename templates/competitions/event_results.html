@@ -1,0 +1,69 @@
+{% extends 'base_competition.html' %}
+{% load competition_filters %}
+{% block title %}Результаты — {{ event }}{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <a href="{% url 'view_heats' event.competition.id %}" class="text-muted small">
+        <i class="fas fa-arrow-left me-1"></i>Назад к заплывам
+    </a>
+    <h1 class="mt-2 mb-1">Результаты</h1>
+    <p class="text-muted mb-0">{{ event }}</p>
+    <a href="{% url 'download_event_results_pdf' event.id %}"
+       class="btn btn-outline-primary mt-3">
+        <i class="fas fa-file-pdf me-2"></i>Скачать PDF
+    </a>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <i class="fas fa-trophy me-2"></i>Итоговый протокол
+    </div>
+    <div class="card-body p-0">
+        <table class="table table-hover mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th class="ps-3" style="width: 80px;">Место</th>
+                    <th>Спортсмен</th>
+                    <th>Команда</th>
+                    <th>Год</th>
+                    <th>Время / Статус</th>
+                    <th>Заплыв</th>
+                    <th>Дорожка</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for result in results %}
+                <tr {% if result.place == 1 %}class="table-warning"{% elif result.place == 2 or result.place == 3 %}class="table-light"{% endif %}>
+                    <td class="ps-3">
+                        {% if result.place == 1 %}
+                        <span class="badge bg-warning text-dark fs-6">🥇 1</span>
+                        {% elif result.place == 2 %}
+                        <span class="badge bg-secondary fs-6">🥈 2</span>
+                        {% elif result.place == 3 %}
+                        <span class="badge" style="background:#cd7f32; font-size:1rem;">🥉 3</span>
+                        {% elif result.place %}
+                        <span class="text-muted fw-semibold">{{ result.place }}</span>
+                        {% else %}
+                        <span class="text-muted">—</span>
+                        {% endif %}
+                    </td>
+                    <td class="fw-semibold">{{ result.athlete.last_name }} {{ result.athlete.first_name }}</td>
+                    <td class="text-muted">{{ result.athlete.team }}</td>
+                    <td class="text-muted">{{ result.athlete.birth_year }}</td>
+                    <td>
+                        {% if result.status %}
+                        <span class="badge bg-danger">{{ result.status }}</span>
+                        {% else %}
+                        <span class="fw-semibold text-primary">{{ result.time|format_time }}</span>
+                        {% endif %}
+                    </td>
+                    <td class="text-muted">{{ result.heat_number }}</td>
+                    <td class="text-muted">{{ result.lane }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

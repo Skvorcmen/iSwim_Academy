@@ -1,0 +1,129 @@
+{% extends 'base_competition.html' %}
+{% load competition_filters %}
+
+{% block title %}Заплывы — {{ competition.name }}{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="mb-1">{{ competition.name }}</h1>
+        <div class="d-flex gap-2">
+            <a href="{% url 'download_start_protocol_pdf' competition.id %}"
+               class="btn btn-outline-secondary">
+                <i class="fas fa-file-pdf me-2"></i>Стартовый протокол
+            </a>
+            <a href="{% url 'download_competition_results_pdf' competition.id %}"
+               class="btn btn-outline-secondary">
+                <i class="fas fa-trophy me-2"></i>Итоговый протокол
+            </a>
+        </div>
+        <p class="text-muted mb-0">
+            <i class="fas fa-calendar me-1"></i>{{ competition.date }}
+            <span class="ms-3"><i class="fas fa-map-marker-alt me-1"></i>{{ competition.location }}</span>
+        </p>
+    </div>
+    {% if can_form_heats and not heats_formed %}
+    <form method="post" action="{% url 'form_heats' competition.id %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-primary">
+            <i class="fas fa-random me-2"></i>Сформировать заплывы
+        </button>
+    </form>
+    {% endif %}
+</div>
+
+{% if heats %}
+{% for heat in heats %}
+<div class="card mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <span>
+            <i class="fas fa-water me-2"></i>
+            Заплыв {{ heat.number }} — {{ heat.event }}
+        </span>
+        <div class="d-flex align-items-center gap-3">
+            <span class="badge {% if heat.status == 'finished' %}bg-success{% elif heat.status == 'in_progress' %}bg-warning{% else %}bg-secondary{% endif %}">
+                {{ heat.get_status_display }}
+            </span>
+            {% if can_enter_results %}
+            <a href="{% url 'enter_results' heat.id %}" class="btn btn-sm btn-outline-light">
+                <i class="fas fa-pencil-alt me-1"></i>Результаты
+            </a>
+            {% endif %}
+            <a href="{% url 'event_results' heat.event.id %}" class="btn btn-sm btn-outline-light">
+                <i class="fas fa-trophy me-1"></i>Итоги категории
+            </a>
+        </div>
+    </div>
+    <div class="card-body p-0">
+        <table class="table table-hover mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th class="ps-3">Дорожка</th>
+                    <th>Спортсмен</th>
+                    <th>Команда / Тренер</th>
+                    <th>Год</th>
+                    <th>Предвремя</th>
+                    <th>Результат</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for lane in heat.heatlane_set.all %}
+                <tr>
+                    <td class="ps-3">
+                        <span class="badge bg-primary rounded-circle" style="width:28px;height:28px;line-height:18px;">
+                            {{ lane.lane }}
+                        </span>
+                    </td>
+                    <td class="fw-semibold">{{ lane.athlete_event.athlete.last_name }} {{ lane.athlete_event.athlete.first_name }}</td>
+                    <td class="text-muted">
+                        {{ lane.athlete_event.athlete.team }}
+                        {% if lane.athlete_event.athlete.coach %}
+                        <small class="d-block">{{ lane.athlete_event.athlete.coach }}</small>
+                        {% endif %}
+                    </td>
+                    <td class="text-muted">{{ lane.athlete_event.athlete.birth_year }}</td>
+                    <td>
+                        {% if lane.athlete_event.preliminary_time %}
+                        {{ lane.athlete_event.preliminary_time|format_time }}
+                        <td>
+                            {% if lane.result_time %}
+                            <span class="fw-semibold text-primary">{{ lane.result_time|format_time }}</span>
+                            {% elif lane.dns %}
+                            <span class="badge bg-secondary">DNS</span>
+                            {% elif lane.dnf %}
+                            <span class="badge bg-warning text-dark">DNF</span>
+                            {% elif lane.dsq %}
+                            <span class="badge bg-danger">DSQ</span>
+                            {% else %}
+                            <span class="text-muted">—</span>
+                            {% endif %}
+                        </td>
+                        {% else %}
+                        <span class="text-muted">—</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endfor %}
+
+{% else %}
+<div class="card">
+    <div class="card-body text-center py-5">
+        <i class="fas fa-water fa-3x text-muted mb-3"></i>
+        <h5 class="text-muted">Заплывы ещё не сформированы</h5>
+        {% if can_form_heats and not heats_formed %}
+        <form method="post" action="{% url 'form_heats' competition.id %}" class="mt-3">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-random me-2"></i>Сформировать заплывы
+            </button>
+        </form>
+        {% endif %}
+    </div>
+</div>
+{% endif %}
+{% endblock %}

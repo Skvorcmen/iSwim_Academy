@@ -1,0 +1,62 @@
+{% extends 'base_competition.html' %}
+
+{% block title %}Соревнования — iSwim{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Соревнования</h1>
+    {% if user.role == 'organizer' or user.role == 'admin' %}
+    <a href="{% url 'create_competition' %}" class="btn btn-primary">
+        <i class="fas fa-plus me-2"></i>Создать соревнование
+    </a>
+    {% endif %}
+</div>
+
+{% if competitions %}
+<div class="row g-4">
+    {% for competition in competitions %}
+    <div class="col-md-6">
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span>{{ competition.name }}</span>
+                <span class="badge {% if competition.status == 'registration' %}bg-success{% elif competition.status == 'finished' %}bg-secondary{% elif competition.status == 'in_progress' %}bg-warning text-dark{% else %}bg-light text-dark{% endif %}">
+                    {{ competition.get_status_display }}
+                </span>
+            </div>
+            <div class="card-body">
+                <p class="mb-1">
+                    <i class="fas fa-calendar me-2 text-primary"></i>{{ competition.date }}
+                </p>
+                <p class="mb-1">
+                    <i class="fas fa-map-marker-alt me-2 text-primary"></i>{{ competition.location }}
+                </p>
+                <p class="mb-3">
+                    <i class="fas fa-swimming-pool me-2 text-primary"></i>{{ competition.lanes_count }} дорожек
+                </p>
+                {% if competition.registration_deadline %}
+                <p class="text-muted small mb-3">
+                    Приём заявок до: {{ competition.registration_deadline|date:"d.m.Y H:i" }}
+                </p>
+                {% endif %}
+                <a href="{% url 'view_heats' competition.id %}" class="btn btn-primary btn-sm">
+                    <i class="fas fa-water me-1"></i>Заплывы
+                </a>
+                {% if competition.is_registration_open %}
+                <a href="{% url 'upload_application' competition.id %}" class="btn btn-outline-primary btn-sm ms-2">
+                    <i class="fas fa-upload me-1"></i>Подать заявку
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="card">
+    <div class="card-body text-center py-5">
+        <i class="fas fa-trophy fa-3x text-muted mb-3"></i>
+        <h5 class="text-muted">Соревнований пока нет</h5>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

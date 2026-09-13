@@ -1,0 +1,99 @@
+{% extends 'base_competition.html' %}
+
+{% block title %}Управление — {{ competition.name }}{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <a href="{% url 'competition_list' %}" class="text-muted small">
+        <i class="fas fa-arrow-left me-1"></i>Назад к соревнованиям
+    </a>
+    <h1 class="mt-2 mb-1">{{ competition.name }}</h1>
+    <p class="text-muted mb-0">
+        <i class="fas fa-calendar me-1"></i>{{ competition.date }}
+        <span class="ms-3"><i class="fas fa-map-marker-alt me-1"></i>{{ competition.location }}</span>
+        <span class="ms-3 badge bg-primary">{{ competition.get_status_display }}</span>
+    </p>
+</div>
+
+<div class="row g-4">
+    <!-- Категории -->
+    <div class="col-md-7">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span><i class="fas fa-list me-2"></i>Категории заплывов</span>
+                <span class="badge bg-secondary">{{ events|length }}</span>
+            </div>
+            <div class="card-body p-0">
+                {% if events %}
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-3">№</th>
+                            <th>Категория</th>
+                            <th class="text-center">Удалить</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for event in events %}
+                        <tr>
+                            <td class="ps-3 text-muted">{{ event.order }}</td>
+                            <td>{{ event }}</td>
+                            <td class="text-center">
+                                <form method="post" action="{% url 'delete_event' event.id %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm btn-outline-danger"
+                                            onclick="return confirm('Удалить категорию?')">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <div class="text-center py-4 text-muted">
+                    <i class="fas fa-list fa-2x mb-2"></i>
+                    <p class="mb-0">Категорий пока нет</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="mt-3 d-flex gap-2">
+            <a href="{% url 'view_heats' competition.id %}" class="btn btn-primary">
+                <i class="fas fa-water me-2"></i>Перейти к заплывам
+            </a>
+            <a href="{% url 'upload_application' competition.id %}" class="btn btn-outline-primary">
+                <i class="fas fa-upload me-2"></i>Загрузить заявки
+            </a>
+        </div>
+    </div>
+
+    <!-- Форма добавления категории -->
+    <div class="col-md-5">
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-plus me-2"></i>Добавить категорию
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    {% for field in form %}
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.errors %}
+                        <div class="text-danger small mt-1">{{ field.errors }}</div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-plus me-2"></i>Добавить
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

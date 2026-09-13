@@ -1,0 +1,55 @@
+{% extends 'base_competition.html' %}
+
+{% block title %}Подача заявки — {{ competition.name }}{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <h1 class="mb-1">Подача заявки</h1>
+    <p class="text-muted mb-0">
+        <i class="fas fa-trophy me-1"></i>{{ competition.name }}
+        <span class="ms-3"><i class="fas fa-calendar me-1"></i>{{ competition.date }}</span>
+        <span class="ms-3"><i class="fas fa-map-marker-alt me-1"></i>{{ competition.location }}</span>
+    </p>
+</div>
+
+<div class="row g-4">
+    <div class="col-md-5">
+        <div class="card h-100">
+            <div class="card-header">
+                <i class="fas fa-download me-2"></i>Шаг 1 — Скачайте шаблон
+            </div>
+            <div class="card-body d-flex flex-column">
+                <p class="text-muted">Скачайте Excel шаблон, заполните данные спортсменов и загрузите обратно.</p>
+                <p class="text-muted small">
+                    Формат времени: <strong>мм:сс.сс</strong> (например <code>00:32.45</code> или <code>01:15.30</code>)
+                </p>
+                <a href="{% url 'download_template' competition.id %}"
+                   class="btn btn-outline-primary mt-auto">
+                    <i class="fas fa-file-excel me-2"></i>Скачать шаблон Excel
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-7">
+        <div class="card h-100">
+            <div class="card-header">
+                <i class="fas fa-upload me-2"></i>Шаг 2 — Загрузите заявку
+            </div>
+            <div class="card-body d-flex flex-column">
+                <p class="text-muted">Выберите заполненный Excel файл и нажмите "Загрузить".</p>
+                <form method="post" enctype="multipart/form-data" class="mt-auto">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <input type="file" name="excel_file" accept=".xlsx"
+                               class="form-control">
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-upload me-2"></i>Загрузить заявку
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
