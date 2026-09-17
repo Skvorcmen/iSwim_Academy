@@ -46,6 +46,11 @@
                     <i class="fas fa-upload me-1"></i>Подать заявку
                 </a>
                 {% endif %}
+                {% if user.role == 'organizer' or user.role == 'admin' %}
+                <a href="{% url 'manage_competition' competition.id %}" class="btn btn-outline-secondary btn-sm ms-2">
+                    <i class="fas fa-cog me-1"></i>Управление
+                </a>
+                {% endif %}
             </div>
         </div>
     </div>

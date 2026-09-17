@@ -32,5 +32,12 @@ class EventForm(forms.ModelForm):
             "birth_year_to",
             "distance",
             "stroke",
-            "order",
         ]
+        labels = {
+            "gender": "Пол",
+            "birth_year_from": "Год рождения от",
+            "birth_year_to": "Год рождения до",
+            "distance": "Дистанция (м)",
+            "stroke": "Стиль",
+            "order": "Порядок",
+        }

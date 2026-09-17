@@ -73,9 +73,10 @@ class UploadApplicationView(CoachRequiredMixin, View):
     def get(self, request, competition_id):
         competition = get_object_or_404(Competition, id=competition_id)
 
-        if not competition.is_registration_open():
+        is_admin_or_organizer = request.user.role in ("admin", "organizer")
+        if not competition.is_registration_open() and not is_admin_or_organizer:
             messages.error(request, "Приём заявок закрыт.")
-            return redirect("/")
+            return redirect("competition_list")
 
         return render(
             request,
@@ -88,9 +89,10 @@ class UploadApplicationView(CoachRequiredMixin, View):
     def post(self, request, competition_id):
         competition = get_object_or_404(Competition, id=competition_id)
 
-        if not competition.is_registration_open():
+        is_admin_or_organizer = request.user.role in ("admin", "organizer")
+        if not competition.is_registration_open() and not is_admin_or_organizer:
             messages.error(request, "Приём заявок закрыт.")
-            return redirect("/")
+            return redirect("competition_list")
 
         excel_file = request.FILES.get("excel_file")
         if not excel_file:
@@ -372,6 +374,17 @@ class ManageCompetitionView(OrganizerRequiredMixin, View):
         competition = get_object_or_404(Competition, id=competition_id)
         form = EventForm(request.POST)
         if form.is_valid():
+            event = form.save(commit=False)
+            event.competition = competition
+            # Автоматически проставляем порядок
+            last_order = (
+                Event.objects.filter(competition=competition).aggregate(
+                    max_order=models.Max("order")
+                )["max_order"]
+                or 0
+            )
+            event.order = last_order + 1
+            event.save()
             event = form.save(commit=False)
             event.competition = competition
             event.save()
