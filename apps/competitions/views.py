@@ -12,6 +12,7 @@ from apps.competitions.utils import (
 from apps.competitions.models import Competition, Application, Event, Heat, HeatLane
 from apps.competitions.services import form_heats_for_competition
 from apps.competitions.forms import CompetitionForm, EventForm
+from django.db import models
 
 # --- Миксины для проверки ролей ---
 
