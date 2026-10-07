@@ -11,18 +11,23 @@ class Competition(TimeStampedModel):
         IN_PROGRESS = "in_progress", "Идут заплывы"
         FINISHED = "finished", "Завершено"
 
-    name = models.CharField(max_length=255)
-    date = models.DateField()
-    location = models.CharField(max_length=255)
-    lanes_count = models.IntegerField(default=6)
-    regulations_pdf = models.FileField(upload_to="regulations/", blank=True)
+    name = models.CharField(max_length=255, verbose_name="Название")
+    date = models.DateField(verbose_name="Дата")
+    location = models.CharField(max_length=255, verbose_name="Место проведения")
+    lanes_count = models.IntegerField(default=6, verbose_name="Количество дорожек")
+    regulations_pdf = models.FileField(
+        upload_to="regulations/", blank=True, verbose_name="Положение (PDF)"
+    )
     status = models.CharField(
+        verbose_name="Статус",
         max_length=20,
         choices=Status.choices,
         default=Status.DRAFT,
     )
-    registration_deadline = models.DateTimeField(null=True, blank=True)
-    is_open = models.BooleanField(default=False)
+    registration_deadline = models.DateTimeField(
+        null=True, blank=True, verbose_name="Дедлайн приёма заявок"
+    )
+    is_open = models.BooleanField(default=False, verbose_name="Открытое соревнование")
 
     class Meta:
         verbose_name = "Соревнование"

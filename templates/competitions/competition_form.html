@@ -20,14 +20,14 @@
                 <form method="post" enctype="multipart/form-data">
                     {% csrf_token %}
                     {% for field in form %}
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">{{ field.label }}</label>
+                    <div class="mb-3 {% if field.field.widget.input_type == 'checkbox' %}form-check{% endif %}">
+                        <label class="{% if field.field.widget.input_type == 'checkbox' %}form-check-label{% else %}form-label fw-semibold{% endif %}"
+                               for="{{ field.id_for_label }}">
+                            {{ field.label }}
+                        </label>
                         {{ field }}
                         {% if field.errors %}
                         <div class="text-danger small mt-1">{{ field.errors }}</div>
-                        {% endif %}
-                        {% if field.help_text %}
-                        <div class="text-muted small mt-1">{{ field.help_text }}</div>
                         {% endif %}
                     </div>
                     {% endfor %}

@@ -13,6 +13,7 @@ from apps.competitions.views import (
     CreateCompetitionView,
     DeleteEventView,
     DownloadStartProtocolPdfView,
+    EditCompetitionView,
 )
 
 urlpatterns = [
@@ -64,5 +65,10 @@ urlpatterns = [
         "<int:competition_id>/start-protocol/pdf/",
         DownloadStartProtocolPdfView.as_view(),
         name="download_start_protocol_pdf",
+    ),
+    path(
+        "<int:competition_id>/edit/",
+        EditCompetitionView.as_view(),
+        name="edit_competition",
     ),
 ]

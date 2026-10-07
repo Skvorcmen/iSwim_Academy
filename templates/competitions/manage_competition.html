@@ -14,6 +14,12 @@
         <span class="ms-3 badge bg-primary">{{ competition.get_status_display }}</span>
     </p>
 </div>
+<div class="d-flex align-items-center gap-3 mt-2">
+    <a href="{% url 'edit_competition' competition.id %}"
+       class="btn btn-outline-secondary btn-sm">
+        <i class="fas fa-edit me-1"></i>Редактировать
+    </a>
+</div>
 
 <div class="row g-4">
     <!-- Категории -->

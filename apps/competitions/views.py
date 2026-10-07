@@ -425,3 +425,36 @@ class DownloadStartProtocolPdfView(LoginRequiredMixin, View):
         response = HttpResponse(buffer, content_type="application/pdf")
         response["Content-Disposition"] = f'attachment; filename="{filename}"'
         return response
+
+
+class EditCompetitionView(OrganizerRequiredMixin, View):
+
+    def get(self, request, competition_id):
+        competition = get_object_or_404(Competition, id=competition_id)
+        form = CompetitionForm(instance=competition)
+        return render(
+            request,
+            "competitions/competition_form.html",
+            {
+                "form": form,
+                "title": f"Редактировать — {competition.name}",
+                "competition": competition,
+            },
+        )
+
+    def post(self, request, competition_id):
+        competition = get_object_or_404(Competition, id=competition_id)
+        form = CompetitionForm(request.POST, request.FILES, instance=competition)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Соревнование обновлено.")
+            return redirect("manage_competition", competition_id=competition_id)
+        return render(
+            request,
+            "competitions/competition_form.html",
+            {
+                "form": form,
+                "title": f"Редактировать — {competition.name}",
+                "competition": competition,
+            },
+        )
