@@ -156,12 +156,21 @@ class ViewHeatsView(LoginRequiredMixin, View):
             .order_by("number")
         )
 
+        # Уникальные категории для навигации
+        events = []
+        seen_event_ids = set()
+        for heat in heats:
+            if heat.event.id not in seen_event_ids:
+                events.append(heat.event)
+                seen_event_ids.add(heat.event.id)
+
         return render(
             request,
             "competitions/view_heats.html",
             {
                 "competition": competition,
                 "heats": heats,
+                "events": events,
                 "can_enter_results": request.user.role in ("organizer", "admin"),
                 "can_form_heats": request.user.role in ("organizer", "admin"),
                 "heats_formed": heats.exists(),
@@ -214,19 +223,24 @@ class EnterResultsView(OrganizerRequiredMixin, View):
 
             if time_str and not (dns or dnf or dsq):
                 try:
-                    # Убираем все нецифровые символы
                     digits = "".join(filter(str.isdigit, time_str))
-
-                    # Дополняем до 6 цифр если меньше
                     digits = digits.zfill(6)
-
                     minutes = int(digits[0:2])
                     seconds = int(digits[2:4])
                     centiseconds = int(digits[4:6])
-
-                    lane.result_time = timedelta(
+                    result_time = timedelta(
                         minutes=minutes, seconds=seconds, milliseconds=centiseconds * 10
                     )
+                    lane.result_time = result_time
+
+                    # Предупреждение если результат сильно лучше предвремени
+                    prelim = lane.athlete_event.preliminary_time
+                    if prelim and result_time < prelim * 0.7:
+                        messages.warning(
+                            request,
+                            f"Дорожка {lane.lane} ({lane.athlete_event.athlete}): "
+                            f"результат значительно лучше предвремени. Проверьте правильность ввода.",
+                        )
                 except (ValueError, IndexError):
                     messages.error(
                         request, f"Неверный формат времени на дорожке {lane.lane}"

@@ -39,6 +39,11 @@ class CompetitionForm(forms.ModelForm):
             ),
             "is_open": forms.CheckboxInput(attrs={"class": "form-check-input"}),
         }
+        help_texts = {
+            "is_open": "Открытое соревнование доступно для команд из других клубов. Внутреннее — только для спортсменов академии iSwim.",
+            "registration_deadline": "Дата и время после которых подача заявок будет закрыта.",
+            "lanes_count": "Количество дорожек в бассейне — влияет на формирование заплывов.",
+        }
 
 
 class EventForm(forms.ModelForm):

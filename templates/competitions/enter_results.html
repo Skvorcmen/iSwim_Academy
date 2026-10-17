@@ -53,7 +53,7 @@
                             <input type="text"
                                    name="time_{{ lane.id }}"
                                    value="{{ lane.result_time|format_time_input }}"
-                                   placeholder="013245 или 01:32.45"
+                                   placeholder="013245"
                                    class="form-control form-control-sm"
                                    style="width: 120px;"
                                    {% if heat.status == 'finished' %}disabled{% endif %}>
