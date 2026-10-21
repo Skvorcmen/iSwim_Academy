@@ -7,18 +7,20 @@
     <a href="{% url 'competition_list' %}" class="text-muted small">
         <i class="fas fa-arrow-left me-1"></i>Назад к соревнованиям
     </a>
-    <h1 class="mt-2 mb-1">{{ competition.name }}</h1>
-    <p class="text-muted mb-0">
-        <i class="fas fa-calendar me-1"></i>{{ competition.date }}
-        <span class="ms-3"><i class="fas fa-map-marker-alt me-1"></i>{{ competition.location }}</span>
-        <span class="ms-3 badge bg-primary">{{ competition.get_status_display }}</span>
-    </p>
-</div>
-<div class="d-flex align-items-center gap-3 mt-2">
-    <a href="{% url 'edit_competition' competition.id %}"
-       class="btn btn-outline-secondary btn-sm">
-        <i class="fas fa-edit me-1"></i>Редактировать
-    </a>
+    <div class="d-flex justify-content-between align-items-center mt-2">
+        <div>
+            <h1 class="mb-1">{{ competition.name }}</h1>
+            <p class="text-muted mb-0">
+                <i class="fas fa-calendar me-1"></i>{{ competition.date }}
+                <span class="ms-3"><i class="fas fa-map-marker-alt me-1"></i>{{ competition.location }}</span>
+                <span class="ms-3 badge bg-primary">{{ competition.get_status_display }}</span>
+            </p>
+        </div>
+        <a href="{% url 'edit_competition' competition.id %}"
+           class="btn btn-outline-secondary">
+            <i class="fas fa-edit me-1"></i>Редактировать
+        </a>
+    </div>
 </div>
 
 <div class="row g-4">

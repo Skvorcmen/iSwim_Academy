@@ -4,45 +4,47 @@
 {% block title %}Заплывы — {{ competition.name }}{% endblock %}
 
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <div>
-        <h1 class="mb-1">{{ competition.name }}</h1>
-        <div class="d-flex gap-2">
-            <a href="{% url 'download_start_protocol_pdf' competition.id %}"
-               class="btn btn-outline-secondary">
-                <i class="fas fa-file-pdf me-2"></i>Стартовый протокол
-            </a>
-            <a href="{% url 'download_competition_results_pdf' competition.id %}"
-               class="btn btn-outline-secondary">
-                <i class="fas fa-trophy me-2"></i>Итоговый протокол
-            </a>
-        </div>
-        <p class="text-muted mb-0">
-            <i class="fas fa-calendar me-1"></i>{{ competition.date }}
-            <span class="ms-3"><i class="fas fa-map-marker-alt me-1"></i>{{ competition.location }}</span>
-        </p>
-    </div>
-    {% if events %}
-        <div class="card mb-4">
-            <div class="card-body py-2">
-                <div class="d-flex flex-wrap gap-2 align-items-center">
-                    <span class="text-muted small fw-semibold me-2">Категории:</span>
-                    {% for event in events %}
-                    <a href="#event-{{ event.id }}" class="btn btn-outline-primary btn-sm">
-                        {{ event }}
-                    </a>
-                    {% endfor %}
-                </div>
+<div class="mb-4">
+    <div class="d-flex justify-content-between align-items-start flex-wrap gap-3">
+        <div>
+            <h1 class="mb-2">{{ competition.name }}</h1>
+            <p class="text-muted mb-2">
+                <i class="fas fa-calendar me-1"></i>{{ competition.date }}
+                <span class="ms-3"><i class="fas fa-map-marker-alt me-1"></i>{{ competition.location }}</span>
+            </p>
+            <div class="d-flex flex-wrap gap-2">
+                <a href="{% url 'download_start_protocol_pdf' competition.id %}" class="btn btn-outline-secondary btn-sm">
+                    <i class="fas fa-file-pdf me-1"></i>Стартовый протокол
+                </a>
+                <a href="{% url 'download_competition_results_pdf' competition.id %}" class="btn btn-outline-secondary btn-sm">
+                    <i class="fas fa-trophy me-1"></i>Итоговый протокол
+                </a>
+                {% if competition.regulations_pdf %}
+                <a href="{{ competition.regulations_pdf.url }}" class="btn btn-outline-secondary btn-sm" target="_blank">
+                    <i class="fas fa-file-pdf me-1"></i>Положение
+                </a>
+                {% endif %}
             </div>
         </div>
+        {% if can_form_heats and not heats_formed %}
+        <form method="post" action="{% url 'form_heats' competition.id %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-random me-2"></i>Сформировать заплывы
+            </button>
+        </form>
         {% endif %}
-    {% if can_form_heats and not heats_formed %}
-    <form method="post" action="{% url 'form_heats' competition.id %}">
-        {% csrf_token %}
-        <button type="submit" class="btn btn-primary">
-            <i class="fas fa-random me-2"></i>Сформировать заплывы
-        </button>
-    </form>
+    </div>
+
+    {% if events %}
+    <div class="d-flex flex-wrap gap-2 align-items-center mt-3">
+        <span class="text-muted small fw-semibold">Категории:</span>
+        {% for event in events %}
+        <a href="#event-{{ event.id }}" class="btn btn-outline-primary btn-sm">
+            {{ event }}
+        </a>
+        {% endfor %}
+    </div>
     {% endif %}
 </div>
 
