@@ -23,6 +23,7 @@ DJANGO_APPS = [
 THIRD_PARTY_APPS = [
     "crispy_forms",
     "crispy_bootstrap5",
+    "django_ckeditor_5",
 ]
 
 LOCAL_APPS = [
@@ -98,3 +99,28 @@ CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 AUTH_USER_MODEL = "users.User"
+
+CKEDITOR_5_UPLOAD_PATH = "uploads/"
+
+CKEDITOR_5_CONFIGS = {
+    "default": {
+        "toolbar": [
+            "heading",
+            "|",
+            "bold",
+            "italic",
+            "underline",
+            "|",
+            "link",
+            "bulletedList",
+            "numberedList",
+            "|",
+            "imageUpload",
+            "blockQuote",
+            "|",
+            "undo",
+            "redo",
+        ],
+        "height": "400px",
+    },
+}

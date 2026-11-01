@@ -1,5 +1,6 @@
 from django.db import models
 from apps.core.models import TimeStampedModel, PublicModel, SEOMixin
+from django_ckeditor_5.fields import CKEditor5Field
 
 
 class ArticleCategory(models.Model):
@@ -17,7 +18,7 @@ class ArticleCategory(models.Model):
 class Article(TimeStampedModel, PublicModel, SEOMixin):
     title = models.CharField(max_length=255)
     slug = models.SlugField(max_length=255, unique=True)
-    content = models.TextField()
+    content = CKEditor5Field(config_name="default")
     cover_image = models.ImageField(upload_to="education/", blank=True)
     category = models.ForeignKey(
         ArticleCategory, on_delete=models.SET_NULL, null=True, blank=True

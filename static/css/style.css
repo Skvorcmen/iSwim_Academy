@@ -68,3 +68,20 @@ footer .container {
     margin: 0 auto;
 }
 
+.article-content img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin: 1rem 0;
+}
+
+.article-content figure {
+    margin: 1rem 0;
+}
+
+.article-content figure figcaption {
+    text-align: center;
+    color: #666;
+    font-size: 14px;
+    margin-top: 0.5rem;
+}

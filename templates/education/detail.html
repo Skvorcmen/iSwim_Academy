@@ -25,8 +25,12 @@
              style="max-height: 450px; width: 100%; object-fit: cover;">
         {% endif %}
 
-        <div style="font-size: 17px; line-height: 1.8; color: #2c2c2c;">
-            {{ article.content|linebreaks }}
+        <style>
+        .article-content img { max-width: 100% !important; height: auto !important; }
+        .article-content figure { max-width: 100% !important; margin: 1rem 0; }
+        </style>
+        <div class="article-content" style="font-size: 17px; line-height: 1.8; color: #2c2c2c;">
+            {{ article.content|safe }}
         </div>
 
     </div>
