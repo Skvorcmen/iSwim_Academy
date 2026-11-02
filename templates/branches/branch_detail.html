@@ -59,4 +59,36 @@
 
     </div>
 </div>
+
+{% if coaches %}
+<hr class="my-5">
+<h4 class="mb-4" style="color: #003366;">Тренеры филиала</h4>
+<div class="row g-3">
+    {% for coach in coaches %}
+    <div class="col-md-4">
+        <div class="card h-100 shadow-sm">
+            {% if coach.photo %}
+            <img src="{{ coach.photo.url }}" class="card-img-top"
+                 alt="{{ coach.first_name }} {{ coach.last_name }}"
+                 style="height: 220px; object-fit: cover;">
+            {% endif %}
+            <div class="card-body">
+                <h6 class="fw-bold" style="color: #003366;">
+                    {{ coach.first_name }} {{ coach.last_name }}
+                </h6>
+                {% if coach.specialization %}
+                <p class="text-muted small mb-1">{{ coach.specialization }}</p>
+                {% endif %}
+                {% if coach.experience_years %}
+                <p class="text-muted small mb-2">Стаж: {{ coach.experience_years }} лет</p>
+                {% endif %}
+                <a href="{% url 'coach_detail' coach.id %}"
+                   class="text-primary small fw-semibold"
+                   style="text-decoration: none;">Подробнее →</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
 {% endblock %}
