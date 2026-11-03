@@ -5,6 +5,7 @@ from apps.users.views import (
     ProfileEditView,
     UserPasswordChangeView,
     UserPasswordChangeDoneView,
+    RoleRequestCreateView,
 )
 
 urlpatterns = [
@@ -21,4 +22,5 @@ urlpatterns = [
         UserPasswordChangeDoneView.as_view(),
         name="user_password_change_done",
     ),
+    path("role-request/", RoleRequestCreateView.as_view(), name="role_request"),
 ]

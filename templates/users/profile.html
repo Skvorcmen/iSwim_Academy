@@ -24,13 +24,71 @@
                 <p class="mb-0"><i class="fas fa-calendar me-2 text-muted"></i>Зарегистрирован: {{ user.date_joined|date:"d.m.Y" }}</p>
             </div>
         </div>
-
+                {% if user.role == 'coach' %}
+        <div class="card shadow-sm mb-4">
+            <div class="card-header" style="background-color: #003366; color: white; font-weight: 600;">
+                <i class="fas fa-clipboard-list me-2"></i>Мои заявки
+            </div>
+            {% if applications %}
+            <ul class="list-group list-group-flush">
+                {% for app in applications %}
+                <li class="list-group-item">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <div class="fw-semibold">{{ app.competition.name }}</div>
+                            <div class="text-muted small">
+                                <i class="fas fa-calendar me-1"></i>{{ app.competition.date|date:"d.m.Y" }}
+                                · {{ app.athletes_count }} спортсм., {{ app.starts_count }} стартов
+                            </div>
+                        </div>
+                        <span class="badge bg-secondary">{{ app.competition.get_status_display }}</span>
+                    </div>
+                    <div class="mt-2">
+                        <a href="{% url 'view_heats' app.competition.id %}" class="btn btn-outline-primary btn-sm">
+                            <i class="fas fa-water me-1"></i>Заплывы
+                        </a>
+                        {% if app.competition.is_registration_open %}
+                        <a href="{% url 'upload_application' app.competition.id %}" class="btn btn-outline-secondary btn-sm ms-1">
+                            <i class="fas fa-upload me-1"></i>Дозаявить
+                        </a>
+                        {% endif %}
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <div class="card-body text-center text-muted">
+                <p class="mb-2">Вы ещё не подавали заявок.</p>
+                <a href="{% url 'competition_list' %}" class="btn btn-primary btn-sm">К соревнованиям</a>
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
         {% if messages %}
         {% for message in messages %}
         <div class="alert alert-{{ message.tags }}">{{ message }}</div>
         {% endfor %}
         {% endif %}
-
+                {% if can_request_coach %}
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <h6 class="fw-bold" style="color: #003366;">Вы тренер?</h6>
+                {% if role_request and role_request.status == 'pending' %}
+                <span class="badge bg-warning text-dark">Заявка на рассмотрении</span>
+                {% else %}
+                    {% if role_request and role_request.status == 'rejected' %}
+                    <div class="alert alert-danger small">
+                        Предыдущая заявка отклонена.
+                        {% if role_request.admin_comment %}Причина: {{ role_request.admin_comment }}{% endif %}
+                    </div>
+                    {% endif %}
+                    <a href="{% url 'role_request' %}" class="btn btn-outline-primary btn-sm">
+                        <i class="fas fa-id-card me-1"></i>Запросить роль тренера
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
         <div class="d-grid gap-2 mb-3">
             <a href="{% url 'profile_edit' %}" class="btn btn-outline-primary">
                 <i class="fas fa-edit me-2"></i>Редактировать профиль

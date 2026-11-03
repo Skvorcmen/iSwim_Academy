@@ -3,7 +3,12 @@ from django.urls import reverse_lazy
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import PasswordChangeView, PasswordChangeDoneView
-from apps.users.forms import RegisterForm, ProfileEditForm
+from django.db.models import Count
+from apps.competitions.models import Application
+from django.shortcuts import redirect
+from django.views.generic import CreateView
+from apps.users.forms import RegisterForm, ProfileEditForm, RoleRequestForm
+from apps.users.models import RoleRequest
 
 
 class RegisterView(CreateView):
@@ -15,6 +20,25 @@ class RegisterView(CreateView):
 class ProfileView(LoginRequiredMixin, TemplateView):
     template_name = "users/profile.html"
     login_url = "/accounts/login/"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+
+        if user.role == "coach":
+            context["applications"] = (
+                Application.objects.filter(coach=user)
+                .select_related("competition")
+                .annotate(
+                    athletes_count=Count("athleteevent__athlete", distinct=True),
+                    starts_count=Count("athleteevent", distinct=True),
+                )
+                .order_by("-competition__date")
+            )
+
+        context["role_request"] = user.role_requests.first()
+        context["can_request_coach"] = user.role in ("fan", "athlete")
+        return context
 
 
 class ProfileEditView(LoginRequiredMixin, UpdateView):
@@ -38,3 +62,29 @@ class UserPasswordChangeView(PasswordChangeView):
 
 class UserPasswordChangeDoneView(PasswordChangeDoneView):
     template_name = "users/password_change_done.html"
+
+
+class RoleRequestCreateView(LoginRequiredMixin, CreateView):
+    form_class = RoleRequestForm
+    template_name = "users/role_request.html"
+    success_url = reverse_lazy("profile")
+    login_url = "/accounts/login/"
+
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            if request.user.role not in ("fan", "athlete"):
+                messages.info(request, "У вас уже есть расширенная роль.")
+                return redirect("profile")
+            if request.user.role_requests.filter(
+                status=RoleRequest.Status.PENDING
+            ).exists():
+                messages.info(request, "Ваша заявка уже на рассмотрении.")
+                return redirect("profile")
+        return super().dispatch(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        messages.success(
+            self.request, "Заявка отправлена. Администратор рассмотрит её."
+        )
+        return super().form_valid(form)
