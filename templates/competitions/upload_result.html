@@ -12,8 +12,16 @@
     <div class="col-md-6">
         <div class="card border-success">
             <div class="card-header bg-success text-white">
-                <i class="fas fa-check-circle me-2"></i>Успешно добавлено: {{ success }} спортсменов
+                <i class="fas fa-check-circle me-2"></i>Добавлено стартов: {{ success }}, спортсменов: {{ athletes_count }}
             </div>
+            {% if stats %}
+            <div class="card-body border-bottom small text-muted">
+                Новых спортсменов: {{ stats.new }} ·
+                уже были в базе: {{ stats.existing }}
+                (с профилем на портале: {{ stats.with_profile }})
+                {% if stats.ambiguous %}· требуют внимания: {{ stats.ambiguous }}{% endif %}
+            </div>
+            {% endif %}
             {% if athletes %}
             <div class="card-body p-0">
                 <ul class="list-group list-group-flush">
@@ -27,6 +35,21 @@
             {% endif %}
         </div>
     </div>
+
+    {% if skipped %}
+    <div class="col-md-6">
+        <div class="card border-warning">
+            <div class="card-header bg-warning text-dark">
+                <i class="fas fa-forward me-2"></i>Пропущено (уже заявлены): {{ skipped|length }}
+            </div>
+            <ul class="list-group list-group-flush">
+                {% for item in skipped %}
+                <li class="list-group-item small">{{ item }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    {% endif %}
 
     {% if errors %}
     <div class="col-md-6">

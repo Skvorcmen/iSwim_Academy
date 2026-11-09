@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-
+{% load competition_filters %}
 {% block title %}Профиль — iSwim{% endblock %}
 
 {% block content %}
@@ -24,7 +24,8 @@
                 <p class="mb-0"><i class="fas fa-calendar me-2 text-muted"></i>Зарегистрирован: {{ user.date_joined|date:"d.m.Y" }}</p>
             </div>
         </div>
-                {% if user.role == 'coach' %}
+
+        {% if user.role == 'coach' %}
         <div class="card shadow-sm mb-4">
             <div class="card-header" style="background-color: #003366; color: white; font-weight: 600;">
                 <i class="fas fa-clipboard-list me-2"></i>Мои заявки
@@ -64,17 +65,21 @@
             {% endif %}
         </div>
         {% endif %}
+
         {% if messages %}
         {% for message in messages %}
         <div class="alert alert-{{ message.tags }}">{{ message }}</div>
         {% endfor %}
         {% endif %}
-                {% if can_request_coach %}
+
+        {% if can_request_coach %}
         <div class="card shadow-sm mb-4">
             <div class="card-body">
                 <h6 class="fw-bold" style="color: #003366;">Вы тренер?</h6>
                 {% if role_request and role_request.status == 'pending' %}
                 <span class="badge bg-warning text-dark">Заявка на рассмотрении</span>
+                {% elif role_request and role_request.status == 'approved' %}
+                <span class="badge bg-success">Заявка одобрена, перезайдите в аккаунт</span>
                 {% else %}
                     {% if role_request and role_request.status == 'rejected' %}
                     <div class="alert alert-danger small">
@@ -89,6 +94,53 @@
             </div>
         </div>
         {% endif %}
+                {% if user.role == 'athlete' %}
+        <div class="card shadow-sm mb-4">
+            <div class="card-header" style="background-color: #003366; color: white; font-weight: 600;">
+                <i class="fas fa-medal me-2"></i>Мои результаты
+            </div>
+            {% if my_results %}
+            <ul class="list-group list-group-flush">
+                {% for r in my_results %}
+                <li class="list-group-item">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <div class="fw-semibold">{{ r.competition.name }}</div>
+                            <div class="small text-muted">
+                                {{ r.competition.date|date:"d.m.Y" }} · {{ r.event }}
+                            </div>
+                            <div class="small text-muted">{{ r.athlete.last_name }} {{ r.athlete.first_name }}</div>
+                        </div>
+                        <div class="text-end">
+                            {% if r.status %}
+                            <span class="badge bg-secondary">{{ r.status }}</span>
+                            {% else %}
+                            <div class="fw-bold text-primary">{{ r.time|format_time }}</div>
+                            {% if r.place %}<span class="badge bg-warning text-dark">{{ r.place }} место</span>{% endif %}
+                            {% endif %}
+                        </div>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <div class="card-body text-muted text-center small">
+                Результатов пока нет. Они появятся после завершения заплывов, если ваш профиль привязан к спортсмену.
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+        {% if user.role == 'athlete' %}
+        <a href="{% url 'athlete_search' %}" class="btn btn-outline-primary w-100 mb-3">
+            <i class="fas fa-search me-2"></i>Найти себя в протоколах
+        </a>
+        {% endif %}
+        {% if user.role == 'coach' or user.role == 'admin' %}
+        <a href="{% url 'coach_link_requests' %}" class="btn btn-outline-primary w-100 mb-3">
+            <i class="fas fa-user-check me-2"></i>Заявки на привязку спортсменов
+        </a>
+        {% endif %}
+
         <div class="d-grid gap-2 mb-3">
             <a href="{% url 'profile_edit' %}" class="btn btn-outline-primary">
                 <i class="fas fa-edit me-2"></i>Редактировать профиль

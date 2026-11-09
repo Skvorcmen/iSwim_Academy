@@ -14,6 +14,8 @@ from apps.competitions.views import (
     DeleteEventView,
     DownloadStartProtocolPdfView,
     EditCompetitionView,
+    FinishCompetitionView,
+    FinishHeatAllDnsView,
 )
 
 urlpatterns = [
@@ -70,5 +72,15 @@ urlpatterns = [
         "<int:competition_id>/edit/",
         EditCompetitionView.as_view(),
         name="edit_competition",
+    ),
+    path(
+        "<int:competition_id>/finish/",
+        FinishCompetitionView.as_view(),
+        name="finish_competition",
+    ),
+    path(
+        "heat/<int:heat_id>/finish-all-dns/",
+        FinishHeatAllDnsView.as_view(),
+        name="finish_heat_all_dns",
     ),
 ]

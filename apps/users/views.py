@@ -9,6 +9,8 @@ from django.shortcuts import redirect
 from django.views.generic import CreateView
 from apps.users.forms import RegisterForm, ProfileEditForm, RoleRequestForm
 from apps.users.models import RoleRequest
+from apps.competitions.models import Application, AthleteEvent, HeatLane, Heat
+from apps.competitions.services import calculate_results_for_event
 
 
 class RegisterView(CreateView):
@@ -38,7 +40,59 @@ class ProfileView(LoginRequiredMixin, TemplateView):
 
         context["role_request"] = user.role_requests.first()
         context["can_request_coach"] = user.role in ("fan", "athlete")
+        if user.role == "athlete":
+            context["my_results"] = self._build_results(user)
         return context
+
+    def _build_results(self, user):
+        profiles = user.athlete_profiles.all()
+        rows = []
+        starts = (
+            AthleteEvent.objects.filter(athlete__in=profiles)
+            .select_related("athlete", "event", "event__competition")
+            .order_by("-event__competition__date", "event__order")
+        )
+        for ae in starts:
+            lane = (
+                HeatLane.objects.filter(
+                    athlete_event=ae, heat__status=Heat.Status.FINISHED
+                )
+                .select_related("heat")
+                .first()
+            )
+            if not lane:
+                continue
+
+            place = None
+            if not ae.is_out_of_competition and not (lane.dns or lane.dnf or lane.dsq):
+                results = calculate_results_for_event(ae.event)
+                if results:
+                    for r in results:
+                        if r["athlete"].id == ae.athlete_id:
+                            place = r["place"]
+                            break
+
+            status = None
+            if lane.dns:
+                status = "DNS"
+            elif lane.dnf:
+                status = "DNF"
+            elif lane.dsq:
+                status = "DSQ"
+            elif ae.is_out_of_competition:
+                status = "ВК"
+
+            rows.append(
+                {
+                    "athlete": ae.athlete,
+                    "competition": ae.event.competition,
+                    "event": ae.event,
+                    "time": lane.result_time,
+                    "place": place,
+                    "status": status,
+                }
+            )
+        return rows
 
 
 class ProfileEditView(LoginRequiredMixin, UpdateView):

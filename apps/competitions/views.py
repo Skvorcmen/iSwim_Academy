@@ -120,8 +120,11 @@ class UploadApplicationView(CoachRequiredMixin, View):
             {
                 "competition": competition,
                 "success": result["success"],
+                "athletes_count": result["athletes_count"],
                 "errors": result["errors"],
+                "skipped": result["skipped"],
                 "athletes": result["athletes"],
+                "stats": result["stats"],
             },
         )
 
@@ -400,9 +403,6 @@ class ManageCompetitionView(OrganizerRequiredMixin, View):
             )
             event.order = last_order + 1
             event.save()
-            event = form.save(commit=False)
-            event.competition = competition
-            event.save()
             messages.success(request, "Категория добавлена.")
             return redirect("manage_competition", competition_id=competition_id)
         events = Event.objects.filter(competition=competition).order_by("order")
@@ -472,3 +472,58 @@ class EditCompetitionView(OrganizerRequiredMixin, View):
                 "competition": competition,
             },
         )
+
+
+class FinishCompetitionView(OrganizerRequiredMixin, View):
+    """Завершить соревнование: только если все заплывы завершены."""
+
+    def post(self, request, competition_id):
+        competition = get_object_or_404(Competition, id=competition_id)
+
+        heats = Heat.objects.filter(event__competition=competition)
+        if not heats.exists():
+            messages.error(request, "Заплывы ещё не сформированы.")
+        elif heats.exclude(status=Heat.Status.FINISHED).exists():
+            numbers = list(
+                heats.exclude(status=Heat.Status.FINISHED)
+                .order_by("number")
+                .values_list("number", flat=True)
+            )
+            messages.error(
+                request,
+                "Нельзя завершить: не завершены заплывы № "
+                + ", ".join(str(n) for n in numbers)
+                + ".",
+            )
+        else:
+            competition.status = Competition.Status.FINISHED
+            competition.save(update_fields=["status", "updated_at"])
+            competition.event_set.update(status=Event.Status.FINISHED)
+            messages.success(request, "Соревнование завершено.")
+
+        return redirect("manage_competition", competition_id=competition_id)
+
+
+class FinishHeatAllDnsView(OrganizerRequiredMixin, View):
+    """Отметить DNS всем, у кого нет результата, и завершить заплыв."""
+
+    def post(self, request, heat_id):
+        heat = get_object_or_404(Heat, id=heat_id)
+
+        if heat.status == Heat.Status.FINISHED:
+            messages.error(request, "Заплыв уже завершён.")
+            return redirect("enter_results", heat_id=heat_id)
+
+        marked = 0
+        for lane in heat.heatlane_set.all():
+            if lane.result_time is None and not (lane.dnf or lane.dsq or lane.dns):
+                lane.dns = True
+                lane.save(update_fields=["dns", "updated_at"])
+                marked += 1
+
+        heat.status = Heat.Status.FINISHED
+        heat.save(update_fields=["status", "updated_at"])
+        messages.success(
+            request, f"Заплыв {heat.number} завершён. Отмечено DNS: {marked}."
+        )
+        return redirect("view_heats", competition_id=heat.event.competition.id)

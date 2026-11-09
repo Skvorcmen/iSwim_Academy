@@ -31,6 +31,7 @@ urlpatterns = [
     path("accounts/", include("django.contrib.auth.urls")),
     path("competitions/", include("apps.competitions.urls")),
     path("ckeditor5/", include("django_ckeditor_5.urls")),
+    path("teams/", include("apps.teams.urls")),
 ]
 
 if settings.DEBUG:

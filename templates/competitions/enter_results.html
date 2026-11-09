@@ -81,16 +81,30 @@
                 </tbody>
             </table>
             {% if heat.status != 'finished' %}
-                <div class="p-3 d-flex gap-3">
-                    <button type="submit" name="action" value="save" class="btn btn-outline-primary">
-                        <i class="fas fa-save me-2"></i>Сохранить (продолжить редактирование)
-                    </button>
-                    <button type="submit" name="action" value="finish" class="btn btn-success">
-                        <i class="fas fa-check me-2"></i>Завершить заплыв
-                    </button>
-                </div>
-                {% endif %}
+            <div class="p-3 d-flex gap-3">
+                <button type="submit" name="action" value="save" class="btn btn-outline-primary">
+                    <i class="fas fa-save me-2"></i>Сохранить (продолжить редактирование)
+                </button>
+                <button type="submit" name="action" value="finish" class="btn btn-success">
+                    <i class="fas fa-check me-2"></i>Завершить заплыв
+                </button>
+            </div>
+            {% endif %}
         </form>
     </div>
 </div>
+
+{% if heat.status != 'finished' %}
+<form method="post" action="{% url 'finish_heat_all_dns' heat.id %}"
+      onsubmit="return confirm('Всем без результата поставить DNS и завершить заплыв?')"
+      class="mt-3">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-outline-secondary">
+        <i class="fas fa-user-slash me-2"></i>Отметить всех без результата как DNS и завершить
+    </button>
+</form>
+<p class="text-muted small mt-2">
+    Сначала сохраните введённые времена кнопкой «Сохранить», иначе несохранённые значения не учтутся.
+</p>
+{% endif %}
 {% endblock %}

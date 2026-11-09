@@ -1,5 +1,7 @@
 import openpyxl
+from datetime import timedelta
 from openpyxl.styles import Font, PatternFill, Alignment
+from openpyxl.utils import get_column_letter
 from openpyxl.worksheet.datavalidation import DataValidation
 
 
@@ -8,7 +10,6 @@ def generate_application_template():
     ws = wb.active
     ws.title = "Заявка"
 
-    # Заголовки
     headers = [
         "Фамилия",
         "Имя",
@@ -21,7 +22,6 @@ def generate_application_template():
         "ВК (да/нет)",
     ]
 
-    # Стиль заголовков
     header_font = Font(bold=True, color="FFFFFF")
     header_fill = PatternFill(
         start_color="003366", end_color="003366", fill_type="solid"
@@ -34,12 +34,10 @@ def generate_application_template():
         cell.fill = header_fill
         cell.alignment = header_alignment
 
-    # Ширина колонок
-    column_widths = [20, 15, 15, 12, 20, 15, 20, 30, 12]
+    column_widths = [20, 15, 15, 12, 25, 15, 20, 30, 12]
     for col, width in enumerate(column_widths, start=1):
-        ws.column_dimensions[openpyxl.utils.get_column_letter(col)].width = width
+        ws.column_dimensions[get_column_letter(col)].width = width
 
-    # Валидация для пола
     gender_validation = DataValidation(
         type="list",
         formula1='"М,Ж"',
@@ -51,7 +49,6 @@ def generate_application_template():
     ws.add_data_validation(gender_validation)
     gender_validation.add("D2:D1000")
 
-    # Валидация для стиля
     stroke_validation = DataValidation(
         type="list",
         formula1='"кроль,спина,брасс,баттерфляй,комплекс"',
@@ -60,7 +57,9 @@ def generate_application_template():
         errorTitle="Неверное значение",
         error="Выберите стиль из списка",
     )
-    # Валидация для ВК
+    ws.add_data_validation(stroke_validation)
+    stroke_validation.add("G2:G1000")
+
     okc_validation = DataValidation(
         type="list",
         formula1='"нет,да"',
@@ -72,7 +71,6 @@ def generate_application_template():
     ws.add_data_validation(okc_validation)
     okc_validation.add("I2:I1000")
 
-    # Пример строки
     example_row = [
         "Иванов",
         "Иван",
@@ -90,14 +88,64 @@ def generate_application_template():
 
     return wb
 
-    # Заполняем колонку ВК значением "нет" по умолчанию для строк 3-1000
-    for row_num in range(3, 50):
-        ws.cell(row=row_num, column=9, value="нет")
+
+def _parse_time(value):
+    """'мм:сс.сс' -> timedelta. Бросает ValueError при неверном формате."""
+    parts = str(value).strip().replace(",", ".").split(":")
+    if len(parts) != 2:
+        raise ValueError("формат мм:сс.сс")
+    minutes = int(parts[0])
+    seconds = float(parts[1])
+    return timedelta(milliseconds=round((minutes * 60 + seconds) * 1000))
+
+
+def _get_or_create_athlete(
+    first_name, last_name, birth_year, gender, team, application
+):
+    """
+    Ключ: ФИО + год рождения (без тренера и команды).
+    Возвращает (athlete, status), где status:
+      'created'   - новый спортсмен
+      'existing'  - найден один, использован
+      'ambiguous' - найдено несколько, ничего не склеиваем
+    """
+    from apps.teams.models import Athlete
+
+    matches = list(
+        Athlete.objects.filter(
+            first_name__iexact=first_name,
+            last_name__iexact=last_name,
+            birth_year=birth_year,
+        )
+    )
+
+    if len(matches) == 1:
+        athlete = matches[0]
+        # Привязка к человеку, а не к тренеру: обновляем команду и тренера
+        athlete.team = team
+        athlete.coach = application.coach
+        athlete.application = application
+        athlete.save(update_fields=["team", "coach", "application", "updated_at"])
+        return athlete, "existing"
+
+    if len(matches) > 1:
+        return None, "ambiguous"
+
+    athlete = Athlete.objects.create(
+        first_name=first_name,
+        last_name=last_name,
+        birth_year=birth_year,
+        gender=gender,
+        team=team,
+        coach=application.coach,
+        application=application,
+    )
+    return athlete, "created"
 
 
 def parse_application_excel(file, application):
-    import openpyxl
-    from apps.teams.models import Athlete, Team
+    from apps.competitions.models import Event, AthleteEvent
+    from apps.teams.models import Team
 
     wb = openpyxl.load_workbook(file)
     ws = wb.active
@@ -109,20 +157,19 @@ def parse_application_excel(file, application):
         "баттерфляй": "butterfly",
         "комплекс": "medley",
     }
-
-    gender_map = {
-        "м": "male",
-        "ж": "female",
-    }
+    gender_map = {"м": "male", "ж": "female"}
 
     errors = []
+    skipped = []
     athletes_created = []
+    stats = {"new": 0, "existing": 0, "with_profile": 0, "ambiguous": 0}
 
     for row_num, row in enumerate(ws.iter_rows(min_row=3, values_only=True), start=3):
-        # Пропускаем пустые строки
-        if not any(row):
+        # Строка считается пустой, если нет ни одного значения, кроме колонки ВК
+        if not any(row[:8]):
             continue
 
+        row = tuple(row) + (None,) * (9 - len(row))
         (
             last_name,
             first_name,
@@ -133,26 +180,18 @@ def parse_application_excel(file, application):
             stroke,
             prelim_time,
             out_of_competition,
-        ) = row
+        ) = row[:9]
 
-        # Валидация обязательных полей
-        # ПРАВИЛЬНО:
+        # Пустой ВК считаем как «нет»
+        if not out_of_competition:
+            out_of_competition = "нет"
+
         if not all(
-            [
-                last_name,
-                first_name,
-                birth_year,
-                gender,
-                team_name,
-                distance,
-                stroke,
-                out_of_competition,
-            ]
+            [last_name, first_name, birth_year, gender, team_name, distance, stroke]
         ):
             errors.append(f"Строка {row_num}: не все обязательные поля заполнены")
             continue
 
-        # Нормализация
         gender_normalized = gender_map.get(str(gender).strip().lower())
         if not gender_normalized:
             errors.append(
@@ -174,9 +213,6 @@ def parse_application_excel(file, application):
             )
             continue
 
-        # Ищем подходящий Event
-        from apps.competitions.models import Event, AthleteEvent
-
         try:
             event = Event.objects.get(
                 competition=application.competition,
@@ -188,67 +224,52 @@ def parse_application_excel(file, application):
             )
         except Event.DoesNotExist:
             errors.append(
-                f"Строка {row_num}: нет категории для "
-                f"{gender} {birth_year} {distance}м {stroke}"
+                f"Строка {row_num}: нет категории для {gender} {birth_year} {distance}м {stroke}"
+            )
+            continue
+        except Event.MultipleObjectsReturned:
+            errors.append(
+                f"Строка {row_num}: найдено несколько подходящих категорий, обратитесь к организатору"
             )
             continue
 
-        # Парсим предварительное время
         preliminary_time = None
         if prelim_time:
             try:
-                from datetime import timedelta
-
-                parts = str(prelim_time).replace(",", ".").split(":")
-                minutes = int(parts[0])
-                seconds = float(parts[1])
-                preliminary_time = timedelta(
-                    minutes=minutes,
-                    seconds=int(seconds),
-                    milliseconds=int((seconds % 1) * 100),
-                )
+                preliminary_time = _parse_time(prelim_time)
             except Exception:
                 errors.append(
                     f'Строка {row_num}: неверный формат времени "{prelim_time}" — используйте мм:сс.сс'
                 )
                 continue
 
-        from apps.teams.models import Team
+        first_name = str(first_name).strip()
+        last_name = str(last_name).strip()
 
         team, _ = Team.objects.get_or_create(
             name=str(team_name).strip(),
-            defaults={
-                "city": "",
-                "coach": application.coach,
-            },
+            defaults={"city": "", "coach": application.coach},
         )
-        # Защита от дублей
-        existing = AthleteEvent.objects.filter(
-            event=event,
-            athlete__first_name=str(first_name).strip(),
-            athlete__last_name=str(last_name).strip(),
-            athlete__birth_year=birth_year,
-            application__competition=application.competition,
-        ).first()
 
-        if existing:
+        athlete, status = _get_or_create_athlete(
+            first_name, last_name, birth_year, gender_normalized, team, application
+        )
+
+        if status == "ambiguous":
+            stats["ambiguous"] += 1
             errors.append(
+                f"Строка {row_num}: найдено несколько спортсменов "
+                f"{last_name} {first_name} {birth_year}, обратитесь к организатору"
+            )
+            continue
+
+        # Защита от дублей: этот спортсмен уже заявлен в категорию
+        if AthleteEvent.objects.filter(athlete=athlete, event=event).exists():
+            skipped.append(
                 f"Строка {row_num}: {last_name} {first_name} {birth_year} "
                 f"уже заявлен в категорию {event}"
             )
             continue
-
-        athlete = Athlete.objects.create(
-            first_name=str(first_name).strip(),
-            last_name=str(last_name).strip(),
-            birth_year=birth_year,
-            gender=gender_normalized,
-            team=team,
-            coach=application.coach,
-            application=application,
-        )
-
-        from apps.competitions.models import AthleteEvent
 
         AthleteEvent.objects.create(
             athlete=athlete,
@@ -259,10 +280,21 @@ def parse_application_excel(file, application):
             in ("да", "yes", "1", "true"),
         )
 
+        if status == "created":
+            stats["new"] += 1
+        else:
+            stats["existing"] += 1
+            if getattr(athlete, "user_id", None):
+                stats["with_profile"] += 1
+
         athletes_created.append(f"{last_name} {first_name}")
 
+    unique_athletes = sorted(set(athletes_created))
     return {
         "success": len(athletes_created),
+        "athletes_count": len(unique_athletes),
         "errors": errors,
-        "athletes": athletes_created,
+        "skipped": skipped,
+        "athletes": unique_athletes,
+        "stats": stats,
     }
