@@ -11,6 +11,9 @@ from apps.users.forms import RegisterForm, ProfileEditForm, RoleRequestForm
 from apps.users.models import RoleRequest
 from apps.competitions.models import Application, AthleteEvent, HeatLane, Heat
 from apps.competitions.services import calculate_results_for_event
+from django.http import FileResponse, Http404, HttpResponseForbidden
+from django.shortcuts import get_object_or_404
+from django.views import View
 
 
 class RegisterView(CreateView):
@@ -142,3 +145,19 @@ class RoleRequestCreateView(LoginRequiredMixin, CreateView):
             self.request, "Заявка отправлена. Администратор рассмотрит её."
         )
         return super().form_valid(form)
+
+
+class DiplomaDownloadView(LoginRequiredMixin, View):
+    """Скан диплома видит только администратор."""
+
+    login_url = "/accounts/login/"
+
+    def get(self, request, pk):
+        if not (request.user.role == "admin" or request.user.is_superuser):
+            return HttpResponseForbidden("Доступ запрещён.")
+        role_request = get_object_or_404(RoleRequest, pk=pk)
+        try:
+            file = role_request.diploma_scan.open("rb")
+        except (FileNotFoundError, ValueError):
+            raise Http404("Файл не найден")
+        return FileResponse(file)

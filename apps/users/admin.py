@@ -1,6 +1,8 @@
 from django.contrib import admin, messages
 from django.contrib.auth.admin import UserAdmin
 from apps.users.models import User, RoleRequest
+from django.urls import reverse
+from django.utils.html import format_html
 
 
 @admin.register(User)
@@ -34,8 +36,16 @@ def reject_requests(modeladmin, request, queryset):
 class RoleRequestAdmin(admin.ModelAdmin):
     list_display = ("user", "status", "created_at")
     list_filter = ("status",)
-    readonly_fields = ("user", "diploma_scan", "comment")
+    fields = ("user", "diploma_link", "comment", "status", "admin_comment")
+    readonly_fields = ("user", "diploma_link", "comment")
     actions = [approve_requests, reject_requests]
+
+    @admin.display(description="Скан диплома")
+    def diploma_link(self, obj):
+        if not obj.pk or not obj.diploma_scan:
+            return "—"
+        url = reverse("diploma_download", args=[obj.pk])
+        return format_html('<a href="{}" target="_blank">Открыть скан</a>', url)
 
     def save_model(self, request, obj, form, change):
         super().save_model(request, obj, form, change)

@@ -3,6 +3,18 @@ from datetime import timedelta
 from openpyxl.styles import Font, PatternFill, Alignment
 from openpyxl.utils import get_column_letter
 from openpyxl.worksheet.datavalidation import DataValidation
+import re
+
+_LATIN = re.compile(r"[A-Za-z]")
+_CYRILLIC = re.compile(r"[А-Яа-яЁё]")
+
+
+def _mixed_alphabet_word(value):
+    """Возвращает слово, где перемешаны латиница и кириллица, иначе None."""
+    for word in re.split(r"[\s\-]+", value):
+        if _LATIN.search(word) and _CYRILLIC.search(word):
+            return word
+    return None
 
 
 def generate_application_template():
@@ -245,6 +257,13 @@ def parse_application_excel(file, application):
 
         first_name = str(first_name).strip()
         last_name = str(last_name).strip()
+        bad_word = _mixed_alphabet_word(last_name) or _mixed_alphabet_word(first_name)
+        if bad_word:
+            errors.append(
+                f'Строка {row_num}: в слове "{bad_word}" смешаны латинские и '
+                f"русские буквы — исправьте раскладку"
+            )
+            continue
 
         team, _ = Team.objects.get_or_create(
             name=str(team_name).strip(),

@@ -10,7 +10,7 @@ class RegisterFormTest(TestCase):
         form_data = {
             'username': 'new_user',
             'email': 'new@test.com',
-            'role': 'coach',
+            'role': 'athlete',
             'password1': 'TestPass123!',
             'password2': 'TestPass123!',
         }
@@ -22,7 +22,7 @@ class RegisterFormTest(TestCase):
         form_data = {
             'username': 'new_user',
             'email': 'new@test.com',
-            'role': 'coach',
+            'role': 'athlete',
             'password1': 'TestPass123!',
             'password2': 'TestPass456!',
         }
@@ -34,7 +34,7 @@ class RegisterFormTest(TestCase):
         """Тест: отсутствует username"""
         form_data = {
             'email': 'new@test.com',
-            'role': 'coach',
+            'role': 'athlete',
             'password1': 'TestPass123!',
             'password2': 'TestPass123!',
         }
@@ -46,7 +46,7 @@ class RegisterFormTest(TestCase):
         """Тест: email не обязателен"""
         form_data = {
             'username': 'new_user',
-            'role': 'coach',
+            'role': 'athlete',
             'password1': 'TestPass123!',
             'password2': 'TestPass123!',
         }
@@ -65,7 +65,7 @@ class RegisterFormTest(TestCase):
         form_data = {
             'username': 'new_user',
             'email': 'new@test.com',
-            'role': 'coach',
+            'role': 'athlete',
             'password1': '123',
             'password2': '123',
         }

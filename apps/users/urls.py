@@ -6,6 +6,7 @@ from apps.users.views import (
     UserPasswordChangeView,
     UserPasswordChangeDoneView,
     RoleRequestCreateView,
+    DiplomaDownloadView,
 )
 
 urlpatterns = [
@@ -23,4 +24,9 @@ urlpatterns = [
         name="user_password_change_done",
     ),
     path("role-request/", RoleRequestCreateView.as_view(), name="role_request"),
+    path(
+        "role-request/<int:pk>/diploma/",
+        DiplomaDownloadView.as_view(),
+        name="diploma_download",
+    ),
 ]
