@@ -1,29 +1,80 @@
 {% extends 'base.html' %}
 {% load competition_filters %}
-{% block title %}Профиль — iSwim{% endblock %}
+{% block title %}Личный кабинет — iSwim{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-6">
+<div class="row g-4">
 
-        <h1 class="mb-4">Личный кабинет</h1>
-
-        <div class="card shadow-sm mb-4">
-            <div class="card-body">
-                <div class="d-flex align-items-center gap-3 mb-3">
-                    <div style="width: 60px; height: 60px; border-radius: 50%; background: rgba(0,102,204,0.1); display: flex; align-items: center; justify-content: center;">
-                        <i class="fas fa-user fa-2x text-primary"></i>
-                    </div>
-                    <div>
-                        <h5 class="mb-0">{{ user.username }}</h5>
-                        <p class="text-muted small mb-0">{{ user.get_role_display }}</p>
-                    </div>
+    <!-- Левая колонка -->
+    <div class="col-lg-4">
+        <div class="card shadow-sm mb-3">
+            <div class="card-body text-center">
+                <div class="mx-auto mb-3 d-flex align-items-center justify-content-center fw-bold text-white"
+                     style="width: 84px; height: 84px; border-radius: 50%; background: linear-gradient(135deg,#0066CC,#003366); font-size: 32px;">
+                    {{ user.first_name|default:user.username|slice:":1"|upper }}
                 </div>
+                <h5 class="mb-1">
+                    {% if user.first_name or user.last_name %}{{ user.first_name }} {{ user.last_name }}{% else %}{{ user.username }}{% endif %}
+                </h5>
+                <p class="text-muted small mb-2">@{{ user.username }}</p>
+                <span class="badge rounded-pill
+                    {% if user.role == 'admin' %}bg-danger
+                    {% elif user.role == 'organizer' %}bg-warning text-dark
+                    {% elif user.role == 'coach' %}bg-primary
+                    {% elif user.role == 'athlete' %}bg-success
+                    {% else %}bg-secondary{% endif %}">
+                    {{ user.get_role_display }}
+                </span>
                 <hr>
-                <p class="mb-1"><i class="fas fa-envelope me-2 text-muted"></i>{{ user.email }}</p>
-                <p class="mb-0"><i class="fas fa-calendar me-2 text-muted"></i>Зарегистрирован: {{ user.date_joined|date:"d.m.Y" }}</p>
+                <p class="small text-start mb-1"><i class="fas fa-envelope me-2 text-muted"></i>{{ user.email|default:"—" }}</p>
+                <p class="small text-start mb-0"><i class="fas fa-calendar me-2 text-muted"></i>С нами с {{ user.date_joined|date:"d.m.Y" }}</p>
             </div>
         </div>
+
+        <div class="d-grid gap-2 mb-3">
+            <a href="{% url 'profile_edit' %}" class="btn btn-outline-primary btn-sm">
+                <i class="fas fa-edit me-2"></i>Редактировать профиль
+            </a>
+            <a href="{% url 'user_password_change' %}" class="btn btn-outline-secondary btn-sm">
+                <i class="fas fa-key me-2"></i>Сменить пароль
+            </a>
+        </div>
+
+        <form method="post" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-outline-danger btn-sm w-100">
+                <i class="fas fa-right-from-bracket me-2"></i>Выйти
+            </button>
+        </form>
+    </div>
+
+    <!-- Правая колонка -->
+    <div class="col-lg-8">
+        <h1 class="h3 mb-3">Личный кабинет</h1>
+
+        
+
+        {% if user.role == 'organizer' or user.role == 'admin' %}
+        <div class="card shadow-sm mb-4">
+            <div class="card-body d-flex flex-wrap gap-2">
+                <a href="{% url 'competition_list' %}" class="btn btn-primary btn-sm">
+                    <i class="fas fa-trophy me-1"></i>К соревнованиям
+                </a>
+                <a href="{% url 'create_competition' %}" class="btn btn-outline-primary btn-sm">
+                    <i class="fas fa-plus me-1"></i>Создать соревнование
+                </a>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if user.role == 'coach' or user.role == 'admin' %}
+        <a href="{% url 'coach_link_requests' %}" class="btn btn-outline-primary w-100 mb-4 position-relative">
+            <i class="fas fa-user-check me-2"></i>Заявки на привязку спортсменов
+            {% if pending_links %}
+            <span class="badge bg-danger rounded-pill ms-2">{{ pending_links }}</span>
+            {% endif %}
+        </a>
+        {% endif %}
 
         {% if user.role == 'coach' %}
         <div class="card shadow-sm mb-4">
@@ -66,10 +117,58 @@
         </div>
         {% endif %}
 
-        {% if messages %}
-        {% for message in messages %}
-        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
-        {% endfor %}
+        {% if user.role == 'athlete' %}
+        {% if personal_bests %}
+        <div class="card shadow-sm mb-4">
+            <div class="card-header" style="background-color: #003366; color: white; font-weight: 600;">
+                <i class="fas fa-bolt me-2"></i>Личные рекорды
+            </div>
+            <ul class="list-group list-group-flush">
+                {% for r in personal_bests %}
+                <li class="list-group-item d-flex justify-content-between">
+                    <span>{{ r.event.distance }} м, {{ r.event.get_stroke_display }}</span>
+                    <span class="fw-bold text-primary">{{ r.time|format_time }}</span>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        <div class="card shadow-sm mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center" style="background-color: #003366; color: white; font-weight: 600;">
+                <span><i class="fas fa-medal me-2"></i>Мои результаты</span>
+                <a href="{% url 'athlete_search' %}" class="btn btn-light btn-sm">
+                    <i class="fas fa-search me-1"></i>Найти себя
+                </a>
+            </div>
+            {% if my_results %}
+            <ul class="list-group list-group-flush">
+                {% for r in my_results %}
+                <li class="list-group-item">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <div class="fw-semibold">{{ r.competition.name }}</div>
+                            <div class="small text-muted">{{ r.competition.date|date:"d.m.Y" }} · {{ r.event }}</div>
+                            <div class="small text-muted">{{ r.athlete.last_name }} {{ r.athlete.first_name }}</div>
+                        </div>
+                        <div class="text-end">
+                            {% if r.status %}
+                            <span class="badge bg-secondary">{{ r.status }}</span>
+                            {% else %}
+                            <div class="fw-bold text-primary">{{ r.time|format_time }}</div>
+                            {% if r.place %}<span class="badge bg-warning text-dark">{{ r.place }} место</span>{% endif %}
+                            {% endif %}
+                        </div>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <div class="card-body text-muted text-center small">
+                Результатов пока нет. Они появятся после завершения заплывов, если ваш профиль привязан к спортсмену.
+            </div>
+            {% endif %}
+        </div>
         {% endif %}
 
         {% if can_request_coach %}
@@ -94,67 +193,6 @@
             </div>
         </div>
         {% endif %}
-                {% if user.role == 'athlete' %}
-        <div class="card shadow-sm mb-4">
-            <div class="card-header" style="background-color: #003366; color: white; font-weight: 600;">
-                <i class="fas fa-medal me-2"></i>Мои результаты
-            </div>
-            {% if my_results %}
-            <ul class="list-group list-group-flush">
-                {% for r in my_results %}
-                <li class="list-group-item">
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div>
-                            <div class="fw-semibold">{{ r.competition.name }}</div>
-                            <div class="small text-muted">
-                                {{ r.competition.date|date:"d.m.Y" }} · {{ r.event }}
-                            </div>
-                            <div class="small text-muted">{{ r.athlete.last_name }} {{ r.athlete.first_name }}</div>
-                        </div>
-                        <div class="text-end">
-                            {% if r.status %}
-                            <span class="badge bg-secondary">{{ r.status }}</span>
-                            {% else %}
-                            <div class="fw-bold text-primary">{{ r.time|format_time }}</div>
-                            {% if r.place %}<span class="badge bg-warning text-dark">{{ r.place }} место</span>{% endif %}
-                            {% endif %}
-                        </div>
-                    </div>
-                </li>
-                {% endfor %}
-            </ul>
-            {% else %}
-            <div class="card-body text-muted text-center small">
-                Результатов пока нет. Они появятся после завершения заплывов, если ваш профиль привязан к спортсмену.
-            </div>
-            {% endif %}
-        </div>
-        {% endif %}
-        {% if user.role == 'athlete' %}
-        <a href="{% url 'athlete_search' %}" class="btn btn-outline-primary w-100 mb-3">
-            <i class="fas fa-search me-2"></i>Найти себя в протоколах
-        </a>
-        {% endif %}
-        {% if user.role == 'coach' or user.role == 'admin' %}
-        <a href="{% url 'coach_link_requests' %}" class="btn btn-outline-primary w-100 mb-3">
-            <i class="fas fa-user-check me-2"></i>Заявки на привязку спортсменов
-        </a>
-        {% endif %}
-
-        <div class="d-grid gap-2 mb-3">
-            <a href="{% url 'profile_edit' %}" class="btn btn-outline-primary">
-                <i class="fas fa-edit me-2"></i>Редактировать профиль
-            </a>
-            <a href="{% url 'user_password_change' %}" class="btn btn-outline-secondary">
-                <i class="fas fa-key me-2"></i>Сменить пароль
-            </a>
-        </div>
-
-        <form method="post" action="{% url 'logout' %}">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-outline-danger w-100">Выйти</button>
-        </form>
-
     </div>
 </div>
 {% endblock %}

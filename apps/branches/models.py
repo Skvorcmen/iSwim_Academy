@@ -4,8 +4,12 @@ from apps.core.models import TimeStampedModel, PublicModel, SEOMixin
 
 
 class Branch(TimeStampedModel, PublicModel, SEOMixin):
+    class City(models.TextChoices):
+        ASTANA = "Астана", "Астана"
+        ALMATY = "Алматы", "Алматы"
+
     name = models.CharField(max_length=100)
-    city = models.CharField(max_length=100)
+    city = models.CharField("Город", max_length=100, choices=City.choices)
     address = models.CharField(max_length=100)
     phone = models.CharField(max_length=20)
     description = models.TextField(blank=True)

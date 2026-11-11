@@ -14,6 +14,7 @@ from apps.competitions.services import calculate_results_for_event
 from django.http import FileResponse, Http404, HttpResponseForbidden
 from django.shortcuts import get_object_or_404
 from django.views import View
+from apps.teams.models import LinkRequest
 
 
 class RegisterView(CreateView):
@@ -41,11 +42,33 @@ class ProfileView(LoginRequiredMixin, TemplateView):
                 .order_by("-competition__date")
             )
 
+        if user.role in ("coach", "admin"):
+            pending = LinkRequest.objects.filter(status=LinkRequest.Status.PENDING)
+            if user.role != "admin":
+                pending = pending.filter(athlete__coach=user)
+            context["pending_links"] = pending.count()
+
         context["role_request"] = user.role_requests.first()
         context["can_request_coach"] = user.role in ("fan", "athlete")
+
         if user.role == "athlete":
-            context["my_results"] = self._build_results(user)
+            results = self._build_results(user)
+            context["my_results"] = results
+            context["personal_bests"] = self._personal_bests(results)
         return context
+
+    def _personal_bests(self, results):
+        best = {}
+        for r in results:
+            if r["status"] or not r["time"]:
+                continue
+            key = (r["event"].distance, r["event"].stroke)
+            if key not in best or r["time"] < best[key]["time"]:
+                best[key] = r
+        return sorted(
+            best.values(),
+            key=lambda r: (r["event"].distance, r["event"].stroke),
+        )
 
     def _build_results(self, user):
         profiles = user.athlete_profiles.all()

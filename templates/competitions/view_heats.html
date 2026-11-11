@@ -40,9 +40,7 @@
     <div class="d-flex flex-wrap gap-2 align-items-center mt-3">
         <span class="text-muted small fw-semibold">Категории:</span>
         {% for event in events %}
-        <a href="#event-{{ event.id }}" class="btn btn-outline-primary btn-sm">
-            {{ event }}
-        </a>
+        <a href="#event-{{ event.id }}" class="btn btn-outline-primary btn-sm">{{ event }}</a>
         {% endfor %}
     </div>
     {% endif %}
@@ -50,57 +48,68 @@
 
 {% if heats %}
 {% for heat in heats %}
-<div class="card mb-4" id="event-{{ heat.event.id }}">
-    <div class="card-header d-flex justify-content-between align-items-center">
-        <span>
-            <i class="fas fa-water me-2"></i>
-            Заплыв {{ heat.number }} — {{ heat.event }}
-        </span>
-        <div class="d-flex align-items-center gap-3">
-            <span class="badge {% if heat.status == 'finished' %}bg-success{% elif heat.status == 'in_progress' %}bg-warning{% else %}bg-secondary{% endif %}">
-                {{ heat.get_status_display }}
+<div class="card mb-4" id="heat-{{ heat.id }}">
+    <div class="card-header">
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+            <span class="fw-semibold">
+                <i class="fas fa-water me-2"></i>Заплыв {{ heat.number }} — {{ heat.event }}
             </span>
-            {% if can_enter_results %}
-            <a href="{% url 'enter_results' heat.id %}" class="btn btn-sm btn-outline-light">
-                <i class="fas fa-pencil-alt me-1"></i>Результаты
-            </a>
-            {% endif %}
-            <a href="{% url 'event_results' heat.event.id %}" class="btn btn-sm btn-outline-light">
-                <i class="fas fa-trophy me-1"></i>Итоги категории
-            </a>
+            <div class="d-flex flex-wrap align-items-center gap-2">
+                <span class="badge {% if heat.status == 'finished' %}bg-success{% elif heat.status == 'in_progress' %}bg-warning text-dark{% else %}bg-secondary{% endif %}">
+                    {{ heat.get_status_display }}
+                </span>
+                {% if can_enter_results %}
+                <a href="{% url 'enter_results' heat.id %}" class="btn btn-sm btn-outline-light">
+                    <i class="fas fa-pencil-alt me-1"></i>Результаты
+                </a>
+                {% endif %}
+                <a href="{% url 'event_results' heat.event.id %}" class="btn btn-sm btn-outline-light">
+                    <i class="fas fa-trophy me-1"></i>Итоги категории
+                </a>
+            </div>
         </div>
     </div>
     <div class="card-body p-0">
-        <table class="table table-hover mb-0">
-            <thead class="table-light">
-                <tr>
-                    <th class="ps-3">Дорожка</th>
-                    <th>Спортсмен</th>
-                    <th>Команда / Тренер</th>
-                    <th>Год</th>
-                    <th>Предвремя</th>
-                    <th>Результат</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for lane in heat.heatlane_set.all %}
-                <tr>
-                    <td class="ps-3">
-                        <span class="badge bg-primary rounded-circle" style="width:28px;height:28px;line-height:18px;">
-                            {{ lane.lane }}
-                        </span>
-                    </td>
-                    <td class="fw-semibold">{{ lane.athlete_event.athlete.last_name }} {{ lane.athlete_event.athlete.first_name }}</td>
-                    <td class="text-muted">
-                        {{ lane.athlete_event.athlete.team }}
-                        {% if lane.athlete_event.athlete.coach %}
-                        <small class="d-block">{{ lane.athlete_event.athlete.coach }}</small>
-                        {% endif %}
-                    </td>
-                    <td class="text-muted">{{ lane.athlete_event.athlete.birth_year }}</td>
-                    <td>
-                        {% if lane.athlete_event.preliminary_time %}
-                        {{ lane.athlete_event.preliminary_time|format_time }}
+        <div class="table-responsive">
+            <table class="table table-hover mb-0 align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-3">Дор.</th>
+                        <th>Спортсмен</th>
+                        <th class="d-none d-md-table-cell">Команда / Тренер</th>
+                        <th class="d-none d-sm-table-cell">Год</th>
+                        <th class="d-none d-sm-table-cell">Предвремя</th>
+                        <th>Результат</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for lane in heat.heatlane_set.all %}
+                    <tr>
+                        <td class="ps-3">
+                            <span class="badge bg-primary rounded-circle d-inline-flex align-items-center justify-content-center" style="width:28px;height:28px;">
+                                {{ lane.lane }}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="fw-semibold">{{ lane.athlete_event.athlete.last_name }} {{ lane.athlete_event.athlete.first_name }}</div>
+                            <small class="text-muted d-md-none">
+                                {{ lane.athlete_event.athlete.team }} · {{ lane.athlete_event.athlete.birth_year }}
+                            </small>
+                        </td>
+                        <td class="text-muted d-none d-md-table-cell">
+                            {{ lane.athlete_event.athlete.team }}
+                            {% if lane.athlete_event.athlete.coach %}
+                            <small class="d-block">{{ lane.athlete_event.athlete.coach }}</small>
+                            {% endif %}
+                        </td>
+                        <td class="text-muted d-none d-sm-table-cell">{{ lane.athlete_event.athlete.birth_year }}</td>
+                        <td class="d-none d-sm-table-cell">
+                            {% if lane.athlete_event.preliminary_time %}
+                            {{ lane.athlete_event.preliminary_time|format_time }}
+                            {% else %}
+                            <span class="text-muted">—</span>
+                            {% endif %}
+                        </td>
                         <td>
                             {% if lane.result_time %}
                             <span class="fw-semibold text-primary">{{ lane.result_time|format_time }}</span>
@@ -114,14 +123,11 @@
                             <span class="text-muted">—</span>
                             {% endif %}
                         </td>
-                        {% else %}
-                        <span class="text-muted">—</span>
-                        {% endif %}
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 {% endfor %}
