@@ -1,0 +1,48 @@
+<footer class="text-white py-5" style="background-color: #003366;">
+    <div class="container">
+        <div class="row g-4 justify-content-between px-3">
+            <div class="col-md-3">
+                <h5 class="fw-bold mb-3">
+                    <i class="fas fa-swimmer me-2"></i>iSwim Академия
+                </h5>
+                <p class="text-white-50 mb-3">Обучение плаванию<br>с 2022 года</p>
+                <div class="d-flex gap-3">
+                    {% if SITE.instagram %}<a href="{{ SITE.instagram }}" target="_blank" rel="noopener" class="text-white"><i class="bi bi-instagram" style="font-size: 22px;"></i></a>{% endif %}
+                    {% if SITE.whatsapp %}<a href="{{ SITE.whatsapp }}" target="_blank" rel="noopener" class="text-white"><i class="bi bi-whatsapp" style="font-size: 22px;"></i></a>{% endif %}
+                    {% if SITE.youtube %}<a href="{{ SITE.youtube }}" target="_blank" rel="noopener" class="text-white"><i class="bi bi-youtube" style="font-size: 22px;"></i></a>{% endif %}
+                </div>
+            </div>
+            <div class="col-md-3">
+                <h5 class="fw-bold mb-3">Контакты</h5>
+                {% if SITE.phone %}
+                <p class="text-white-50 mb-1">
+                    <i class="fas fa-phone me-2"></i><a href="tel:{{ SITE.phone|cut:' '|cut:'('|cut:')'|cut:'-' }}" class="text-white-50 text-decoration-none">{{ SITE.phone }}</a>
+                </p>
+                {% endif %}
+                {% if SITE.email %}
+                <p class="text-white-50 mb-1">
+                    <i class="fas fa-envelope me-2"></i><a href="mailto:{{ SITE.email }}" class="text-white-50 text-decoration-none">{{ SITE.email }}</a>
+                </p>
+                {% endif %}
+                <p class="text-white-50 mb-0">
+                    <i class="fas fa-map-marker-alt me-2"></i>Астана и Алматы
+                </p>
+            </div>
+            <div class="col-md-3">
+                <h5 class="fw-bold mb-3">Навигация</h5>
+                <ul class="list-unstyled">
+                    <li class="mb-1"><a href="{% url 'news-list' %}" class="text-white-50 text-decoration-none">Новости</a></li>
+                    <li class="mb-1"><a href="{% url 'article_list' %}" class="text-white-50 text-decoration-none">Библиотека</a></li>
+                    <li class="mb-1"><a href="{% url 'branch-list' %}" class="text-white-50 text-decoration-none">Филиалы</a></li>
+                    <li class="mb-1"><a href="{% url 'coach_list' %}" class="text-white-50 text-decoration-none">Тренеры</a></li>
+                    <li class="mb-1"><a href="{% url 'about' %}" class="text-white-50 text-decoration-none">О нас</a></li>
+                    <li class="mb-1"><a href="{% url 'contacts' %}" class="text-white-50 text-decoration-none">Контакты</a></li>
+                </ul>
+            </div>
+        </div>
+        <hr style="border-color: rgba(255,255,255,0.15);" class="mt-4">
+        <div class="text-center">
+            <p class="text-white-50 mb-0">&copy; {% now "Y" %} iSwim Академия плавания. Все права защищены.</p>
+        </div>
+    </div>
+</footer>

@@ -4,7 +4,9 @@ from django.http import HttpResponse, HttpResponseForbidden
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Prefetch
-
+from apps.competitions.services import (
+    update_event_status_if_finished,
+)
 from apps.competitions.utils import (
     generate_application_template,
     parse_application_excel,
@@ -259,6 +261,7 @@ class EnterResultsView(OrganizerRequiredMixin, View):
         if action == "finish":
             heat.status = Heat.Status.FINISHED
             heat.save()
+            update_event_status_if_finished(heat.event)
             messages.success(request, f"Заплыв {heat.number} завершён.")
             return redirect("view_heats", competition_id=heat.event.competition.id)
         else:
@@ -523,6 +526,11 @@ class FinishHeatAllDnsView(OrganizerRequiredMixin, View):
 
         heat.status = Heat.Status.FINISHED
         heat.save(update_fields=["status", "updated_at"])
+        update_event_status_if_finished(heat.event)
+        messages.success(
+            request, f"Заплыв {heat.number} завершён. Отмечено DNS: {marked}."
+        )
+
         messages.success(
             request, f"Заплыв {heat.number} завершён. Отмечено DNS: {marked}."
         )

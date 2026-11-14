@@ -33,13 +33,37 @@
         </div>
     </div>
     <div class="col-md-3">
+            {% if SITE.clients %}
+    <div class="col-md-3">
         <div class="p-3 rounded" style="background: rgba(0,102,204,0.08);">
-            <div class="fs-2 fw-bold text-primary">20 000+</div>
+            <div class="fs-2 fw-bold text-primary">{{ SITE.clients }}</div>
             <div class="text-muted small">довольных клиентов</div>
         </div>
     </div>
+    {% endif %}
+    </div>
 </div>
 
+<!-- Ближайшие соревнования -->
+{% if upcoming_competitions %}
+<h2 class="mb-4">Ближайшие соревнования</h2>
+<div class="row g-4 mb-5">
+    {% for c in upcoming_competitions %}
+    <div class="col-md-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body d-flex flex-column">
+                <span class="badge mb-2 align-self-start" style="background: rgba(0,102,204,0.1); color: #0066CC;">{{ c.get_status_display }}</span>
+                <h6 class="card-title fw-bold" style="color: #003366;">{{ c.name }}</h6>
+                <p class="text-muted small mb-1"><i class="fas fa-calendar me-1"></i>{{ c.date|date:"d.m.Y" }}</p>
+                <p class="text-muted small mb-3"><i class="fas fa-map-marker-alt me-1"></i>{{ c.location }}</p>
+                <a href="{% url 'view_heats' c.id %}" class="mt-auto text-primary fw-semibold" style="text-decoration: none;">Подробнее →</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+<hr class="section-divider">
+{% endif %}
 <!-- Последние новости -->
 {% if latest_news %}
 <h2 class="mb-4">Последние новости</h2>
@@ -121,7 +145,7 @@
             <div class="card-body">
                 <h6 class="card-title mb-1">{{ coach.first_name }} {{ coach.last_name }}</h6>
                 <p class="text-muted small mb-0">{{ coach.specialization }}</p>
-                <a href="{% url 'coach_list' %}" class="mt-auto text-primary fw-semibold" style="text-decoration: none;">Подробнее →</a>
+                <a href="{% url 'coach_detail' coach.pk %}" class="mt-auto text-primary fw-semibold" style="text-decoration: none;">Подробнее →</a>
             </div>
         </div>
     </div>

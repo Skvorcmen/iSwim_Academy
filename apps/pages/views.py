@@ -3,6 +3,8 @@ from apps.news.models import News
 from apps.branches.models import Branch
 from apps.staff.models import Coach
 from apps.education.models import Article
+from django.utils import timezone
+from apps.competitions.models import Competition
 
 
 class HomeView(TemplateView):
@@ -23,7 +25,12 @@ class HomeView(TemplateView):
         context["coaches_count"] = coaches.count()
         context["articles"] = articles[:3]
         context["articles_count"] = articles.count()
-
+        if self.request.user.is_authenticated:
+            context["upcoming_competitions"] = (
+                Competition.objects.filter(date__gte=timezone.localdate())
+                .exclude(status=Competition.Status.DRAFT)
+                .order_by("date")[:3]
+            )
         return context
 
 

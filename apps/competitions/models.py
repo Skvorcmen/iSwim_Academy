@@ -15,6 +15,11 @@ class Competition(TimeStampedModel):
     date = models.DateField(verbose_name="Дата")
     location = models.CharField(max_length=255, verbose_name="Место проведения")
     lanes_count = models.IntegerField(default=6, verbose_name="Количество дорожек")
+    first_lane = models.IntegerField(
+        default=1,
+        verbose_name="Первая рабочая дорожка",
+        help_text="Например, 2, если бассейн на 8 дорожек, а плывём по дорожкам 2-7.",
+    )
     regulations_pdf = models.FileField(
         upload_to="regulations/", blank=True, verbose_name="Положение (PDF)"
     )

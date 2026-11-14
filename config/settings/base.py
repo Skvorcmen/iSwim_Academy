@@ -67,6 +67,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "apps.core.context_processors.site_contacts",
             ]
         },
     }
@@ -127,3 +128,10 @@ CKEDITOR_5_CONFIGS = {
         "height": "400px",
     },
 }
+
+CONTACT_PHONE = config("CONTACT_PHONE", default="")
+CONTACT_EMAIL = config("CONTACT_EMAIL", default="")
+SOCIAL_INSTAGRAM = config("SOCIAL_INSTAGRAM", default="")
+SOCIAL_WHATSAPP = config("SOCIAL_WHATSAPP", default="")
+SOCIAL_YOUTUBE = config("SOCIAL_YOUTUBE", default="")
+CLIENTS_COUNT = config("CLIENTS_COUNT", default="")

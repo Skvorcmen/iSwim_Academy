@@ -1,0 +1,8 @@
+-r requirements.txt
+black==26.5.1
+coverage==7.15.2
+factory_boy==3.3.3
+Faker==40.36.0
+pytest==9.1.1
+pytest-cov==7.1.0
+pytest-django==4.12.0

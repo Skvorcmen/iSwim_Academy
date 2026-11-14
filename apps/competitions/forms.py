@@ -12,6 +12,7 @@ class CompetitionForm(forms.ModelForm):
             "date",
             "location",
             "lanes_count",
+            "first_lane",
             "regulations_pdf",
             "status",
             "registration_deadline",
@@ -22,6 +23,7 @@ class CompetitionForm(forms.ModelForm):
             "date": "Дата",
             "location": "Место проведения",
             "lanes_count": "Количество дорожек",
+            "first_lane": "Первая рабочая дорожка",
             "regulations_pdf": "Положение (PDF)",
             "status": "Статус",
             "registration_deadline": "Дедлайн приёма заявок",
@@ -32,6 +34,7 @@ class CompetitionForm(forms.ModelForm):
             "date": forms.DateInput(attrs={"class": "form-control", "type": "date"}),
             "location": forms.TextInput(attrs={"class": "form-control"}),
             "lanes_count": forms.NumberInput(attrs={"class": "form-control"}),
+            "first_lane": forms.NumberInput(attrs={"class": "form-control"}),
             "regulations_pdf": forms.FileInput(attrs={"class": "form-control"}),
             "status": forms.Select(attrs={"class": "form-select"}),
             "registration_deadline": forms.DateTimeInput(
@@ -42,7 +45,7 @@ class CompetitionForm(forms.ModelForm):
         help_texts = {
             "is_open": "Открытое соревнование доступно для команд из других клубов. Внутреннее — только для спортсменов академии iSwim.",
             "registration_deadline": "Дата и время после которых подача заявок будет закрыта.",
-            "lanes_count": "Количество дорожек в бассейне — влияет на формирование заплывов.",
+            "lanes_count": "Сколько дорожек используем (рабочие дорожки идут подряд от первой).",
         }
 
 
